@@ -1,0 +1,81 @@
+{
+  "version": 2,
+  "name": "ninja-choba",
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/update",
+      "dest": "/public/update.html"
+    },
+    {
+      "src": "/api/deploy",
+      "dest": "/api/deploy.js"
+    },
+    {
+      "src": "/privacy-policy",
+      "dest": "/public/privacy-policy.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "/public/terms.html"
+    },
+    {
+      "src": "/api/claude",
+      "dest": "/api/claude.js"
+    },
+    {
+      "src": "/api/supabase",
+      "dest": "/api/supabase.js"
+    },
+    {
+      "src": "/api/config",
+      "dest": "/api/config.js"
+    },
+    {
+      "src": "/sw.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate"
+      },
+      "dest": "/public/sw.js"
+    },
+    {
+      "src": "/manifest.json",
+      "headers": {
+        "Content-Type": "application/manifest+json"
+      },
+      "dest": "/public/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}

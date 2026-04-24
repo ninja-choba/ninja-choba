@@ -1,0 +1,67 @@
+{
+  "name": "忍者帳場AI",
+  "short_name": "忍者帳場",
+  "description": "個人事業主・飲食店向け AI経理アシスタント",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080810",
+  "theme_color": "#7c6fff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "finance",
+    "business",
+    "productivity"
+  ],
+  "lang": "ja",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "ダッシュボード - 売上・原価・損益をリアルタイム表示"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "レシート撮影",
+      "short_name": "撮影",
+      "description": "レシートをすぐに撮影して仕訳",
+      "url": "/?tab=receipt",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ダッシュボード",
+      "short_name": "損益",
+      "description": "損益をリアルタイム確認",
+      "url": "/?tab=dashboard",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "scope": "/"
+}
