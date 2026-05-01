@@ -625,7 +625,10 @@ select option{background:var(--bg3)}
 
 
 
-</html
+
+
+<script>
+
 function checkTaxSchedule() {
   if (typeof getCurrentTaxRates !== 'function') return;
   const rates = getCurrentTaxRates();
@@ -748,7 +751,8 @@ function showMobileMenu() {
 // ── デスクトップナビの描画 ──
 
 
-// デスクトップ用サイドバーのロゴ描画<script>
+// デスクトップ用サイドバーのロゴ描画
+
 
 const MODEL="claude-sonnet-4-20250514";
 let currentAcct=null,accounts={},currentTab="dashboard";
@@ -13096,9 +13100,22 @@ window.addEventListener("load", ()=>{ if(currentAcct) checkPWAShortcut();
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   } });
 
+
+
+
+// ── パスワード認証 ──
+const APP_PASSWORD = 'ninja2026'; const APP_PW = APP_PASSWORD; // TODO: Supabase Auth移行後に削除
+const PW_KEY = 'ninja_choba_auth';
+
+
+
+
+
 </script>
 
 <script>
+
+
 
 
 
@@ -13142,6 +13159,8 @@ function checkPassword() {
 }
 }
 }
+
+
 
 </script>
 
