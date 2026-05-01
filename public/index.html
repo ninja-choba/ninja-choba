@@ -1056,6 +1056,7 @@ function monthlyData(a){
 
 function renderSidebar(){
   const list=document.getElementById('acct-list');
+  if(!list) return;
   const keys=Object.keys(accounts);
   if(!keys.length){list.innerHTML='<div style="padding:12px;font-size:11px;color:var(--text3)">事業者がいません</div>';return;}
   list.innerHTML=keys.map(email=>{
@@ -10704,15 +10705,15 @@ function showSignupScreen() {
   // イベント設定
   document.getElementById('tab-login').onclick = function() { switchAuthTab('login'); };
   document.getElementById('tab-signup').onclick = function() { switchAuthTab('signup'); };
-  document.getElementById('login-btn').onclick = checkPassword;
-  document.getElementById('demo-btn').onclick = quickDemoLogin;
+  document.getElementById('login-btn').onclick = function() { if(typeof checkPassword==='function') checkPassword(); };
+  document.getElementById('demo-btn').onclick = function() { if(typeof quickDemoLogin==='function') quickDemoLogin(); };
   document.getElementById('reset-btn').onclick = showPasswordReset;
   document.getElementById('signup-btn').onclick = handleSignup;
 
   // Enterキー対応
   ['login-email-input','login-pw-input'].forEach(function(id) {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', function(e) { if(e.key==='Enter') checkPassword(); });
+    if (el) el.addEventListener('keydown', function(e) { if(e.key==='Enter' && typeof checkPassword==='function') checkPassword(); });
   });
 }
 
