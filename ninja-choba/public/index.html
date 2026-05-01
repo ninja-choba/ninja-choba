@@ -625,7 +625,8 @@ select option{background:var(--bg3)}
 
 
 
-</html
+
+<script>
 function checkTaxSchedule() {
   if (typeof getCurrentTaxRates !== 'function') return;
   const rates = getCurrentTaxRates();
@@ -13096,9 +13097,20 @@ window.addEventListener("load", ()=>{ if(currentAcct) checkPWAShortcut();
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   } });
 
+
+
+
+// ── パスワード認証 ──
+const APP_PASSWORD = 'ninja2026'; const APP_PW = APP_PASSWORD; // TODO: Supabase Auth移行後に削除
+const PW_KEY = 'ninja_choba_auth';
+
+
+
+
 </script>
 
 <script>
+
 
 
 
@@ -13142,6 +13154,7 @@ function checkPassword() {
 }
 }
 }
+
 
 </script>
 
