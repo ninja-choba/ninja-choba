@@ -763,7 +763,7 @@ let processingQueue=false;
 function startClock(){
   clockTimer=setInterval(()=>{
     const now=new Date();
-    document.getElementById('clock').textContent=now.toLocaleTimeString('ja-JP');
+    const clockEl=document.getElementById('clock'); if(clockEl) clockEl.textContent=now.toLocaleTimeString('ja-JP');
     checkScheduledTasks(now);
   },1000);
 }
