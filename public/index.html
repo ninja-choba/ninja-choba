@@ -10624,7 +10624,6 @@ function showSignupScreen() {
     + '<div id="pw-error" style="display:none;color:var(--red);font-family:var(--sans);font-size:11px;margin-bottom:8px;text-align:left"></div>'
     + '<button id="login-btn" style="width:100%;padding:13px;background:var(--text);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">ログイン</button>'
     + '<button id="demo-btn" style="width:100%;padding:10px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:12px;cursor:pointer;margin-bottom:12px">デモを試す（登録不要）</button>'
-    + '<button id="reset-btn" style="background:none;border:none;color:var(--text3);font-family:var(--sans);font-size:11px;cursor:pointer">パスワードを忘れた方</button>'
     + '</div>'
     + '<div id="signup-form" style="display:none">'
     + '<input id="signup-name" class="form-inp" placeholder="お名前（例：山田 太郎）" style="margin-bottom:10px;text-align:left">'
@@ -13020,17 +13019,6 @@ window.addEventListener("load", ()=>{ if(currentAcct) checkPWAShortcut();
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   } });
-
-
-
-
-// ── パスワード認証 ──
-const APP_PASSWORD = 'ninja2026'; const APP_PW = APP_PASSWORD; // TODO: Supabase Auth移行後に削除
-const PW_KEY = 'ninja_choba_auth';
-
-
-
-
 
 </script>
 
