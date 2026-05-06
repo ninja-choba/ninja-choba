@@ -10605,59 +10605,7 @@ function renderTrialBanner() {
 }
 
 // ── サインアップ画面 ──
-function showSignupScreen() {
-  const pwScreen = document.getElementById('pw-screen');
-  if (!pwScreen) return;
-
-  const div = document.createElement('div');
-  div.style.cssText = 'text-align:center;padding:32px 24px;background:#f8f7f4;border:1px solid #e0dbd4;border-radius:16px;width:380px;max-width:92vw';
-
-  div.innerHTML = '<div style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px">忍者帳場</div>'
-    + '<div style="font-family:var(--sans);font-size:10px;letter-spacing:2px;color:var(--text3);margin-bottom:24px">NINJA-CHOBA</div>'
-    + '<div style="display:flex;background:var(--bg3);border-radius:99px;padding:3px;margin-bottom:20px">'
-    + '<button id="tab-login" style="flex:1;padding:8px;border:none;border-radius:99px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;background:var(--text);color:#fff">ログイン</button>'
-    + '<button id="tab-signup" style="flex:1;padding:8px;border:none;border-radius:99px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--text3)">新規登録</button>'
-    + '</div>'
-    + '<div id="login-form">'
-    + '<input id="login-email-input" type="email" class="form-inp" placeholder="メールアドレス" style="margin-bottom:10px;text-align:left">'
-    + '<input id="login-pw-input" type="password" class="form-inp" placeholder="パスワード" style="margin-bottom:10px;text-align:left">'
-    + '<div id="pw-error" style="display:none;color:var(--red);font-family:var(--sans);font-size:11px;margin-bottom:8px;text-align:left"></div>'
-    + '<button id="login-btn" style="width:100%;padding:13px;background:var(--text);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">ログイン</button>'
-    + '<button id="demo-btn" style="width:100%;padding:10px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:12px;cursor:pointer;margin-bottom:12px">デモを試す（登録不要）</button>'
-    + '</div>'
-    + '<div id="signup-form" style="display:none">'
-    + '<input id="signup-name" class="form-inp" placeholder="お名前（例：山田 太郎）" style="margin-bottom:10px;text-align:left">'
-    + '<input id="signup-email" type="email" class="form-inp" placeholder="メールアドレス" style="margin-bottom:10px;text-align:left">'
-    + '<input id="signup-pw" type="password" class="form-inp" placeholder="パスワード（8文字以上）" style="margin-bottom:10px;text-align:left">'
-    + '<input id="signup-pw2" type="password" class="form-inp" placeholder="パスワード（確認）" style="margin-bottom:10px;text-align:left">'
-    + '<input id="signup-invite" class="form-inp" placeholder="招待コード（任意）" style="margin-bottom:10px;text-align:left">'
-    + '<div id="signup-error" style="display:none;color:var(--red);font-family:var(--sans);font-size:11px;margin-bottom:8px;text-align:left"></div>'
-    + '<button id="signup-btn" style="width:100%;padding:13px;background:var(--text);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">14日間無料で始める</button>'
-    + '<div style="font-family:var(--sans);font-size:10px;color:var(--text3);line-height:1.6">登録することで利用規約・プライバシーポリシーに同意したものとみなします</div>'
-    + '</div>';
-
-  // 既存のpw-screen内をクリアして置き換え
-  pwScreen.innerHTML = '';
-  pwScreen.appendChild(div);
-
-  // イベント設定
-  document.getElementById('tab-login').onclick = function() { switchAuthTab('login'); };
-  document.getElementById('tab-signup').onclick = function() { switchAuthTab('signup'); };
-  document.getElementById('login-btn').onclick = checkPassword;
-  document.getElementById('demo-btn').onclick = quickDemoLogin;
-  document.getElementById('reset-btn').onclick = showPasswordReset;
-  document.getElementById('signup-btn').onclick = handleSignup;
-
-  // Enterキー対応
-  ['login-email-input','login-pw-input'].forEach(function(id) {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', function(e) { if(e.key==='Enter') checkPassword(); });
-  });
-}
-
-
-// ── 招待コード ──
-const VALID_INVITE_CODES = ['NINJA2026', 'CHOBA001', 'BETA2026'];
+function showSignupScreen() { /* HTMLに直接記述済み */ }
 
 function validateInviteCode(code) {
   if (!code) return true; // 招待コードなしでも登録可（βフェーズ）
@@ -11669,8 +11617,7 @@ function showSignOutConfirm() {
     const pwScreen = document.getElementById('pw-screen');
     if (pwScreen) {
       pwScreen.style.display = 'flex';
-      showSignupScreen();
-    }
+          }
     showToast('ログアウトしました');
   };
   document.getElementById('signout-no').onclick = function() { bg.remove(); };
@@ -13012,7 +12959,6 @@ function importMigrationJournals(journals) {
 
 loadAccounts();
 checkTaxSchedule();
-showSignupScreen();
   if(typeof renderModeToggle==='function') renderModeToggle();
 // PWAショートカット対応
 window.addEventListener("load", ()=>{ if(currentAcct) checkPWAShortcut();
