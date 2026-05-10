@@ -550,6 +550,192 @@ select option{background:var(--bg3)}
   .body-wrap { padding-bottom: 0; }
 }
 
+
+/* ════════════════════════════════════════
+   モバイルUX改善（メルカリライク）
+   ════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+
+  /* ── ボトムナビを大きく ── */
+  .mobile-nav {
+    height: 64px;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 4px);
+  }
+  .mobile-nav-btn {
+    padding: 10px 4px 8px;
+    font-size: 10px;
+    gap: 4px;
+    min-height: 64px;
+  }
+  .mobile-nav-btn .nav-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /* ── カードを大きく・余白を広く ── */
+  .card {
+    padding: 18px 16px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+  .card-title {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  /* ── ボタンを大きく・タップしやすく ── */
+  .btn {
+    padding: 14px 20px;
+    font-size: 15px;
+    border-radius: 10px;
+    min-height: 52px;
+  }
+  .btn-sm {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+  .btn-primary {
+    min-height: 52px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+
+  /* ── フォームを大きく ── */
+  .form-inp {
+    padding: 14px 16px;
+    font-size: 16px; /* iOSズーム防止 */
+    border-radius: 10px;
+    min-height: 52px;
+  }
+  .form-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .form-row {
+    margin-bottom: 14px;
+  }
+  select.form-select {
+    padding: 14px 16px;
+    font-size: 15px;
+    min-height: 52px;
+    border-radius: 10px;
+  }
+
+  /* ── リストアイテムを大きく ── */
+  .acct-item {
+    padding: 14px 16px;
+    min-height: 64px;
+  }
+  .journal-item, .receipt-item {
+    padding: 14px 16px;
+    min-height: 60px;
+  }
+
+  /* ── タブバーを大きく ── */
+  .tab, [class*="tab-btn"] {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  /* ── main-contentの余白 ── */
+  #main-content {
+    padding: 12px 12px 80px;
+  }
+
+  /* ── アラート・バッジを大きく ── */
+  .alert {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  .badge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  /* ── モーダルを画面下から全幅に ── */
+  .modal {
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 32px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* ── topbarを大きく ── */
+  .topbar {
+    height: 52px;
+    padding: 0 14px;
+  }
+  .topbar-title, #topbar-title {
+    font-size: 13px;
+  }
+
+  /* ── body-wrapのpaddingを調整 ── */
+  .body-wrap {
+    padding-bottom: 72px;
+  }
+
+  /* ── セクションタイトルを大きく ── */
+  .section-title, .card-title {
+    font-size: 15px;
+  }
+
+  /* ── タップ領域を最低44px確保 ── */
+  button, a, [role="button"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* ただしnavボタンは除外 */
+  .mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* ── ログイン画面のボタンもモバイルで大きく ── */
+@media (max-width: 767px) {
+  #pw-screen .btn-primary {
+    padding: 16px;
+    font-size: 16px;
+    min-height: 56px;
+    border-radius: 12px;
+  }
+  #pw-screen .btn-secondary {
+    padding: 14px;
+    font-size: 15px;
+    min-height: 52px;
+    border-radius: 12px;
+  }
+  #pw-screen .form-inp {
+    padding: 16px;
+    font-size: 16px;
+    min-height: 54px;
+    border-radius: 12px;
+  }
+  #pw-screen .tab-bar button {
+    padding: 12px;
+    font-size: 13px;
+    min-height: 48px;
+  }
+  .login-card {
+    padding: 0 4px;
+  }
+  #pw-screen .login-logo {
+    width: 160px;
+    margin-bottom: 28px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -564,13 +750,11 @@ select option{background:var(--bg3)}
     </div>
     <!-- ログインフォーム -->
     <div id="login-form">
-      <input id="login-email-input" type="email" class="form-inp" placeholder="メールアドレス"
-        onkeydown="if(event.key==='Enter')doCheckPassword()">
-      <input id="login-pw-input" type="password" class="form-inp" placeholder="パスワード"
-        onkeydown="if(event.key==='Enter')doCheckPassword()">
+      <input id="login-email-input" type="email" class="form-inp" placeholder="メールアドレス">
+      <input id="login-pw-input" type="password" class="form-inp" placeholder="パスワード">
       <div id="pw-error" style="display:none;color:var(--red);font-family:var(--sans);font-size:11px;margin-bottom:8px;text-align:left"></div>
-      <button class="btn-primary" onclick="doCheckPassword()">ログイン</button>
-      <button class="btn-secondary" onclick="doDemoLogin()">デモを試す（登録不要）</button>
+      <button class="btn-primary" id="login-submit-btn">ログイン</button>
+      <button class="btn-secondary" id="demo-submit-btn">デモを試す（登録不要）</button>
     </div>
     <!-- 新規登録フォーム -->
     <div id="signup-form" style="display:none">
@@ -580,7 +764,7 @@ select option{background:var(--bg3)}
       <input id="signup-pw2" type="password" class="form-inp" placeholder="パスワード（確認）">
       <input id="signup-invite" class="form-inp" placeholder="招待コード（任意）">
       <div id="signup-error" style="display:none;color:var(--red);font-family:var(--sans);font-size:11px;margin-bottom:8px;text-align:left"></div>
-      <button class="btn-primary" onclick="doHandleSignup()">14日間無料で始める</button>
+      <button class="btn-primary" id="signup-submit-btn">14日間無料で始める</button>
       <div style="font-family:var(--sans);font-size:10px;color:var(--text3);margin-top:8px;line-height:1.6">
         登録することで利用規約・プライバシーポリシーに同意したものとみなします
       </div>
@@ -884,6 +1068,20 @@ function showMobileMenu() {
       + '<div style="height:1px;background:var(--border);margin-bottom:12px"></div>';
   }
 
+  // ── 家計簿セクション ──
+  var kakeiboHtml = '<div style="margin-bottom:12px">'
+    + '<div style="font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text3);margin-bottom:8px">家計簿</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">'
+    + menuBtn('家計ホーム', "mobileTab('kakeibo_home')", false, true)
+    + menuBtn('収支一覧', "mobileTab('kakeibo_list')", false, true)
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+    + menuBtn('予算管理', "mobileTab('kakeibo_budget')", false, true)
+    + menuBtn('グラフ', "mobileTab('kakeibo_graph')", false, true)
+    + '</div>'
+    + '</div>'
+    + '<div style="height:1px;background:var(--border);margin-bottom:12px"></div>';
+
   var financeHtml = '<div style="margin-bottom:12px">'
     + '<div style="font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text3);margin-bottom:8px">財務</div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">'
@@ -922,7 +1120,7 @@ function showMobileMenu() {
   inner.innerHTML = '<div style="width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 16px"></div>'
     + '<div style="font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text3);margin-bottom:12px">'
     + (plan.name || '') + 'プラン</div>'
-    + acctHtml + financeHtml + otherHtml;
+    + acctHtml + kakeiboHtml + financeHtml + otherHtml;
 
   // 事業所ボタンをDOMで生成（クォート問題を回避）
   var switchList = document.getElementById('acct-switch-list');
@@ -11617,6 +11815,28 @@ function doHandleSignup() {
 // ── 初期化 ──
 loadAccounts();
 checkTaxSchedule();
+
+// ── ログインフォームのイベント設定 ──
+(function setupLoginEvents() {
+  function trySetup() {
+    var loginBtn = document.getElementById('login-submit-btn');
+    var demoBtn = document.getElementById('demo-submit-btn');
+    var signupBtn = document.getElementById('signup-submit-btn');
+    var emailInput = document.getElementById('login-email-input');
+    var pwInput = document.getElementById('login-pw-input');
+
+    if (loginBtn) loginBtn.onclick = function() { doCheckPassword(); };
+    if (demoBtn) demoBtn.onclick = function() { doDemoLogin(); };
+    if (signupBtn) signupBtn.onclick = function() { doHandleSignup(); };
+    if (emailInput) emailInput.onkeydown = function(e) { if(e.key==='Enter') doCheckPassword(); };
+    if (pwInput) pwInput.onkeydown = function(e) { if(e.key==='Enter') doCheckPassword(); };
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', trySetup);
+  } else {
+    trySetup();
+  }
+})();
 
 window.addEventListener('orientationchange', function() {
   var ps = document.getElementById('pw-screen');
