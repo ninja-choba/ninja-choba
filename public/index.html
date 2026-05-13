@@ -1204,7 +1204,10 @@ let processingQueue=false;
 function startClock(){
   clockTimer=setInterval(()=>{
     const now=new Date();
-    var clockEl=document.getElementById('clock');if(clockEl)clockEl.textContent=now.toLocaleTimeString('ja-JP');
+    var clockEl=const clockEl = document.getElementById('clock');
+if (clockEl) {
+  clockEl.textContent = now.toLocaleTimeString('ja-JP');
+}
     checkScheduledTasks(now);
   },1000);
 }
