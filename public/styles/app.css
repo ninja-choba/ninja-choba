@@ -1,1 +1,708 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f7f4;--bg3:#f0ede8;--bg4:#e8e4de;--bg5:#dedad3;
+  --border:#e0dbd4;--border2:#ccc7be;
+  --text:#1a1a1a;--text2:#555550;--text3:#999990;
+  --accent:#7c6fff;--accent2:#5a4fff;--accent3:#3d2fff;
+  --green:#2ecc8c;--green-bg:rgba(46,204,140,0.1);--green-glow:rgba(46,204,140,0.2);
+  --red:#ff5f7e;--red-bg:rgba(255,95,126,0.1);
+  --yellow:#ffcc44;--yellow-bg:rgba(255,204,68,0.1);
+  --blue:#4d9fff;--blue-bg:rgba(77,159,255,0.1);
+  --purple:#c084fc;--purple-bg:rgba(192,132,252,0.1);
+  --orange:#ff8c44;
+  --radius:10px;--radius-sm:6px;--radius-lg:14px;
+  --font:'Noto Serif JP','Hiragino Mincho ProN','Yu Mincho',serif;--serif:'Noto Serif JP','Hiragino Mincho ProN',serif;--mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;overflow:hidden}
 
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;gap:12px;padding:0 20px;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;position:relative;z-index:50}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#9c7fff,#5a4fff,#3d2fff);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px rgba(124,111,255,0.5),0 4px 12px rgba(0,0,0,0.4)}
+.logo-text{display:flex;flex-direction:column;line-height:1.1}
+.logo-main{font-size:14px;font-weight:900;letter-spacing:-0.5px;background:linear-gradient(90deg,#fff,#9c7fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:9px;color:var(--accent);letter-spacing:1.5px;font-weight:500;text-transform:uppercase}
+.topbar-sep{width:1px;height:28px;background:var(--border2)}
+.topbar-title{font-size:12px;color:var(--text2);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* リアルタイムインジケーター */
+.realtime-badge{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;background:var(--green-bg);border:1px solid rgba(46,204,140,0.3);font-size:11px;color:var(--green);font-weight:600;flex-shrink:0}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.clock{font-family:var(--mono);font-size:12px;color:var(--text2);flex-shrink:0}
+
+/* 検索 */
+.search-wrap{position:relative;flex-shrink:0}
+.search-input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px 6px 32px;font-size:12px;color:var(--text);font-family:var(--font);width:200px;outline:none;transition:all 0.2s}
+.search-input::placeholder{color:var(--text3)}
+.search-input:focus{border-color:var(--accent);width:260px;box-shadow:0 0 0 3px rgba(124,111,255,0.12)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none}
+.search-results{position:absolute;top:calc(100% + 6px);right:0;width:380px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);z-index:200;max-height:420px;overflow-y:auto;display:none;box-shadow:0 16px 48px rgba(0,0,0,0.6)}
+.search-results.open{display:block}
+.search-result-item{padding:12px 14px;border-bottom:1px solid var(--border)}
+.search-result-item:last-child{border-bottom:none}
+.search-loading{padding:14px;text-align:center;color:var(--text3);font-size:12px}
+
+/* ── BODY ── */
+.body-wrap{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sidebar-sec{padding:14px 12px 4px;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;font-weight:700}
+.acct-list{flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.acct-item{padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:all 0.15s;position:relative}
+.acct-item:hover{background:var(--bg3)}
+.acct-item.active{background:var(--bg4);border-color:var(--border2)}
+.acct-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:0 2px 2px 0}
+.acct-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acct-biz{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.sidebar-foot{padding:10px;border-top:1px solid var(--border)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.tabs-bar{display:flex;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tab{padding:14px 12px 13px;font-size:11px;cursor:pointer;border:none;background:none;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;flex-shrink:0;font-family:var(--font);transition:all 0.15s;font-weight:500}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
+.content{flex:1;overflow-y:auto;padding:20px;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.ntag{font-size:9px;padding:1px 5px;border-radius:99px;background:rgba(192,132,252,0.2);color:var(--purple);margin-left:3px;vertical-align:middle}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:none;border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;transition:border-color 0.2s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-size:12px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;color:var(--text);letter-spacing:0.2px}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:none;border-radius:var(--radius-lg);padding:14px 16px;position:relative;overflow:hidden;transition:all 0.2s;cursor:default}
+.kpi:hover{border-color:var(--border2);transform:translateY(-1px)}
+.kpi::after{content:'';position:absolute;inset:0;opacity:0.04;pointer-events:none}
+.kpi.green::after{background:var(--green)}
+.kpi.red::after{background:var(--red)}
+.kpi.blue::after{background:var(--blue)}
+.kpi.yellow::after{background:var(--yellow)}
+.kpi-label{font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase;font-weight:600}
+.kpi-value{font-size:22px;font-weight:700;font-family:var(--mono);letter-spacing:-1px;line-height:1}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:5px;display:flex;align-items:center;gap:4px}
+.kpi-badge{font-size:10px;padding:2px 6px;border-radius:99px;font-weight:600}
+.kpi-bar{position:absolute;bottom:0;left:0;height:2px;border-radius:0 0 var(--radius-lg) var(--radius-lg);transition:width 0.8s cubic-bezier(0.4,0,0.2,1)}
+.kpi-icon{position:absolute;top:12px;right:14px;font-size:20px;opacity:0.15}
+
+/* リアルタイムカウンター アニメーション */
+@keyframes countUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.animate-count{animation:countUp 0.4s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.3s ease-out}
+
+/* ── 損益チャートエリア ── */
+.pl-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chart-wrap{background:var(--bg3);border-radius:var(--radius);padding:12px;position:relative}
+.chart-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px}
+.chart-bar-label{width:80px;color:var(--text2);flex-shrink:0;text-align:right;font-size:10px}
+.chart-bar-track{flex:1;background:var(--bg4);border-radius:99px;height:8px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+.chart-bar-value{width:70px;font-family:var(--mono);font-size:10px;color:var(--text2);flex-shrink:0}
+
+/* ── 月次サマリーグラフ ── */
+.sparkline-wrap{display:flex;align-items:flex-end;gap:3px;height:48px}
+.spark-bar{flex:1;border-radius:3px 3px 0 0;transition:height 0.6s ease;min-height:2px}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:8px 10px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap;font-size:10px;text-transform:uppercase;letter-spacing:0.5px}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);transition:color 0.1s}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3);color:var(--text)}
+
+/* ── BADGES ── */
+.badge{font-size:10px;padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block;font-weight:600}
+.b-green{background:var(--green-bg);color:var(--green)}
+.b-red{background:var(--red-bg);color:var(--red)}
+.b-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.b-blue{background:var(--blue-bg);color:var(--blue)}
+.b-purple{background:var(--purple-bg);color:var(--purple)}
+.b-gray{background:var(--bg4);color:var(--text3);border:1px solid var(--border)}
+.tax8{background:rgba(46,204,140,0.12);color:var(--green);font-size:10px;padding:1px 6px;border-radius:99px;font-family:var(--mono);font-weight:600}
+.tax10{background:rgba(77,159,255,0.12);color:var(--blue);font-size:10px;padding:1px 6px;border-radius:99px;font-family:var(--mono);font-weight:600}
+.taxfree{background:rgba(255,204,68,0.12);color:var(--yellow);font-size:10px;padding:1px 6px;border-radius:99px;font-family:var(--mono);font-weight:600}
+.phase1{background:rgba(46,204,140,0.15);color:var(--green);font-size:10px;padding:1px 6px;border-radius:99px;font-weight:600}
+.phase2{background:rgba(124,111,255,0.15);color:var(--accent);font-size:10px;padding:1px 6px;border-radius:99px;font-weight:600}
+
+/* ── FORMS ── */
+.form-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start}
+.form-label{font-size:11px;color:var(--text3);width:76px;flex-shrink:0;padding-top:8px}
+input[type=text],input[type=email],input[type=number],input[type=date],input[type=time],select,textarea{
+  padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  font-size:12px;background:var(--bg3);color:var(--text);font-family:var(--font);width:100%;
+  outline:none;transition:border-color 0.15s,box-shadow 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,111,255,0.1)}
+textarea{resize:vertical;min-height:60px}
+select option{background:var(--bg3)}
+
+/* ── BUTTONS ── */
+.btn{padding:7px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);font-family:var(--font);transition:all 0.15s;font-weight:500}
+.btn:hover{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),var(--accent3));color:#fff;border-color:transparent;font-weight:700;box-shadow:0 2px 12px rgba(90,79,255,0.4)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(90,79,255,0.5)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-danger{border-color:var(--red);color:var(--red)}
+.btn-danger:hover{background:var(--red-bg)}
+.btn-success{border-color:var(--green);color:var(--green)}
+.btn-success:hover{background:var(--green-bg)}
+.btn-ghost{border-color:transparent;color:var(--text3)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+
+/* ── UPLOAD ── */
+.upload-area{border:1px dashed var(--border2);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;background:var(--bg3);transition:all 0.2s}
+.upload-area:hover{border-color:var(--accent);background:rgba(124,111,255,0.05)}
+
+/* ── ALERTS ── */
+.alert{padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:10px;border:1px solid transparent}
+.a-green{background:var(--green-bg);color:var(--green);border-color:rgba(46,204,140,0.25)}
+.a-red{background:var(--red-bg);color:var(--red);border-color:rgba(255,95,126,0.25)}
+.a-yellow{background:var(--yellow-bg);color:var(--yellow);border-color:rgba(255,204,68,0.25)}
+.a-blue{background:var(--blue-bg);color:var(--blue);border-color:rgba(77,159,255,0.25)}
+
+/* ── LOADING ── */
+.loading-inline{text-align:center;padding:20px;color:var(--text3);font-size:12px}
+.dot-anim::after{content:'.';animation:dots 1.2s infinite}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+.empty{text-align:center;padding:36px;color:var(--text3);font-size:12px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:300;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:22px;width:500px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.7)}
+.modal-title{font-size:16px;font-weight:900;margin-bottom:16px;letter-spacing:-0.5px}
+.ai-box{background:var(--bg4);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:11px;color:var(--text2);margin-top:10px;line-height:1.8}
+.review-item{background:var(--bg3);border:1px solid rgba(255,204,68,0.3);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px}
+
+/* ── リアルタイム仕訳ストリーム ── */
+.stream-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:0;overflow:hidden;max-height:280px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.stream-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;transition:background 0.3s}
+.stream-row:last-child{border-bottom:none}
+.stream-row.new{background:rgba(124,111,255,0.06);animation:streamIn 0.4s ease-out}
+@keyframes streamIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.stream-time{font-family:var(--mono);color:var(--text3);font-size:10px;width:44px;flex-shrink:0}
+.stream-desc{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stream-amount{font-family:var(--mono);font-weight:600;min-width:80px;text-align:right;flex-shrink:0}
+.stream-cat{min-width:70px;flex-shrink:0}
+.stream-phase{flex-shrink:0}
+.stream-status{flex-shrink:0}
+
+/* ── 除外バッジ ── */
+.exclude-row{padding:5px 8px;background:rgba(255,95,126,0.06);border-radius:var(--radius-sm);font-size:11px;color:var(--red);margin-bottom:3px;display:flex;align-items:center;gap:6px;border:1px solid rgba(255,95,126,0.15)}
+
+/* ── 損益バー ── */
+.pl-bar-container{margin-bottom:14px}
+.pl-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px}
+.pl-bar-track{background:var(--bg4);border-radius:99px;height:10px;overflow:hidden}
+.pl-bar-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(0.4,0,0.2,1)}
+
+/* ── 月別グラフ ── */
+.monthly-chart{display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 4px}
+.month-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.month-bar-wrap{flex:1;display:flex;align-items:flex-end;gap:1px;width:100%}
+.month-bar{flex:1;border-radius:2px 2px 0 0;min-height:2px;transition:height 0.8s ease}
+.month-label{font-size:9px;color:var(--text3);font-family:var(--mono)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .pl-grid{grid-template-columns:1fr}
+  .search-input{width:120px}
+  .tabs-bar{padding:0 8px}
+  .tab{padding:11px 8px 10px;font-size:10px}
+  .content{padding:10px;padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+}
+
+/* ── モバイルボトムナビ ── */
+.mobile-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:8px 4px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
+  z-index:100;
+  flex-direction:row;align-items:center;justify-content:space-around;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.4);
+}
+.mobile-nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:4px 8px;border:none;background:transparent;cursor:pointer;
+  font-size:9px;color:var(--text3);font-family:var(--font);font-weight:500;
+  border-radius:var(--radius-sm);transition:all 0.15s;min-width:52px;
+}
+.mobile-nav-btn.active{color:var(--accent)}
+.mobile-nav-btn .nav-icon{font-size:20px;line-height:1}
+.mobile-acct-bar{
+  display:none;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:8px 12px;overflow-x:auto;white-space:nowrap;
+  scrollbar-width:none;
+}
+.mobile-acct-bar::-webkit-scrollbar{display:none}
+.mobile-acct-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:99px;margin-right:6px;
+  border:1px solid var(--border2);background:var(--bg3);
+  cursor:pointer;font-size:11px;color:var(--text2);
+  white-space:nowrap;transition:all 0.15s;font-family:var(--font);
+}
+.mobile-acct-chip.active{
+  background:rgba(124,111,255,0.15);border-color:var(--accent);color:var(--accent);font-weight:700;
+}
+
+@media(max-width:768px){
+  .mobile-nav{display:flex}
+  .mobile-acct-bar{display:block}
+  .topbar .search-wrap{display:none}
+}
+
+/* 和風アクセント */
+.wafuu-title{font-family:var(--serif);letter-spacing:0.05em}
+.page-title-jp{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:0.03em}
+.card-title{font-family:var(--serif)}
+.modal-title{font-family:var(--serif)}
+
+/* ── シートメニュー（freee風） ── */
+.sheet-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 150;
+  transition: background .25s; pointer-events: none;
+}
+.sheet-bg.open { background: rgba(0,0,0,.45); pointer-events: auto; }
+.sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg); border-radius: 16px 16px 0 0;
+  padding: 0 0 calc(16px + env(safe-area-inset-bottom,0px));
+  transform: translateY(100%); transition: transform .28s cubic-bezier(.32,1,.36,1);
+  z-index: 151; max-height: 70vh; overflow-y: auto;
+}
+.sheet.open { transform: translateY(0); }
+.sheet-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 99px; margin: 12px auto 4px; }
+.sheet-title { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--text3); text-transform: uppercase; padding: 8px 16px 10px; border-bottom: 1px solid var(--border); }
+.sheet-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+.sheet-item:last-child { border-bottom: none; }
+.sheet-item:active { background: var(--bg2); }
+.sheet-item-icon { font-size: 22px; width: 28px; text-align: center; flex-shrink: 0; }
+.sheet-item-text { flex: 1; }
+.sheet-item-label { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+.sheet-item-sub { font-family: var(--sans); font-size: 11px; color: var(--text3); }
+.sheet-item-arrow { font-size: 14px; color: var(--border2); }
+
+
+/* ══ デスクトップレイアウト（768px以上）══ */
+@media (min-width: 768px) {
+  body { max-width: 100% !important; border: none !important; }
+  #app { flex-direction: row !important; }
+  .sidebar { display: flex !important; width: 240px !important; flex-shrink: 0; height: 100vh; position: sticky; top: 0; overflow-y: auto; }
+  .topbar { position: sticky; top: 0; z-index: 10; }
+  #tab-content-wrap { flex: 1; overflow-y: auto; }
+  #bottom-nav-bar { display: none !important; }
+  .kpi-grid { grid-template-columns: repeat(4, 1fr) !important; }
+}
+.sb-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; border-radius: 8px; margin: 2px 8px; font-family: var(--sans); font-size: 13px; color: var(--text2); transition: background .15s; font-weight: 500; }
+.sb-nav-item:hover { background: var(--bg3); color: var(--text); }
+.sb-nav-item.active { background: var(--bg4); color: var(--text); font-weight: 700; }
+.sb-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+.sb-nav-section { font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; padding: 14px 16px 4px; }
+.sb-logo { padding: 20px 16px 12px; border-bottom: 1px solid var(--border); margin-bottom: 8px; display: none; }
+.sb-logo-text { font-size: 20px; font-weight: 900; letter-spacing: -1px; }
+.sb-logo-sub { font-family: var(--sans); font-size: 9px; letter-spacing: 2px; color: var(--text3); }
+@media (min-width: 768px) { .sb-logo { display: block !important; } }
+
+/* ── モバイル縦横切替対応 ── */
+#pw-screen {
+  align-items: center;
+  justify-content: center;
+}
+@media (max-height: 600px) and (orientation: landscape) {
+  #pw-screen {
+    align-items: flex-start;
+    padding: 16px 24px;
+  }
+  #pw-screen > div {
+    margin: auto;
+  }
+}
+@media screen and (orientation: portrait) {
+  #pw-screen {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ── 筆文字壁紙（全画面共通） ── */
+.page-watermark {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+.page-watermark img {
+  width: min(280px, 60vw);
+  opacity: 0.04;
+  filter: grayscale(100%);
+  user-select: none;
+}
+
+/* ── ログイン画面 ── */
+#pw-screen {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+  overflow-y: auto;
+}
+#pw-screen .login-card {
+  width: 100%;
+  max-width: 340px;
+  margin: auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+}
+#pw-screen .login-logo {
+  width: 180px;
+  margin-bottom: 20px;
+}
+#pw-screen .tab-bar {
+  display: flex;
+  background: #f0ede8;
+  border-radius: 99px;
+  padding: 3px;
+  margin-bottom: 20px;
+}
+#pw-screen .tab-bar button {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  border-radius: 99px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s;
+}
+#pw-screen .tab-bar .active {
+  background: var(--text);
+  color: #fff;
+}
+#pw-screen .tab-bar .inactive {
+  background: transparent;
+  color: var(--text3);
+}
+#pw-screen .form-inp {
+  text-align: left;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  box-sizing: border-box;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-inp::placeholder {
+  color: var(--text3);
+}
+.form-inp:focus {
+  border-color: var(--text2);
+  background: var(--bg);
+}
+#pw-screen .btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+#pw-screen .btn-secondary {
+  width: 100%;
+  padding: 11px;
+  background: #f0ede8;
+  color: var(--text2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+}
+#pw-screen .version-tag {
+  font-family: var(--sans);
+  font-size: 9px;
+  color: rgba(0,0,0,0.18);
+  text-align: center;
+  margin-top: 18px;
+  letter-spacing: 1px;
+}
+
+/* ── ログイン画面では壁紙を非表示 ── */
+#pw-screen .page-watermark {
+  display: none !important;
+}
+
+/* ── main-contentのz-index確保 ── */
+#main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 縦横切替対応 ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  #pw-screen { align-items: flex-start; padding: 12px 24px; }
+  #pw-screen .login-card { margin: 0 auto; }
+  #pw-screen .login-logo { width: 100px; margin-bottom: 10px; }
+}
+
+
+/* ── モバイルボトムナビ ── */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.mobile-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 9px;
+  color: var(--text3);
+  gap: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-nav-btn.active {
+  color: var(--text);
+  font-weight: 700;
+}
+.mobile-nav-btn .nav-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+/* ── body-wrapのパディング（ナビ分） ── */
+.body-wrap {
+  padding-bottom: 60px;
+}
+@media (min-width: 768px) {
+  .mobile-nav { display: none !important; }
+  .body-wrap { padding-bottom: 0; }
+}
+
+
+/* ════════════════════════════════════════
+   モバイルUX改善（メルカリライク）
+   ════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+
+  /* ── ボトムナビを大きく ── */
+  .mobile-nav {
+    height: 64px;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 4px);
+  }
+  .mobile-nav-btn {
+    padding: 10px 4px 8px;
+    font-size: 10px;
+    gap: 4px;
+    min-height: 64px;
+  }
+  .mobile-nav-btn .nav-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /* ── カードを大きく・余白を広く ── */
+  .card {
+    padding: 18px 16px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+  .card-title {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  /* ── ボタンを大きく・タップしやすく ── */
+  .btn {
+    padding: 14px 20px;
+    font-size: 15px;
+    border-radius: 10px;
+    min-height: 52px;
+  }
+  .btn-sm {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+  .btn-primary {
+    min-height: 52px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+
+  /* ── フォームを大きく ── */
+  .form-inp {
+    padding: 14px 16px;
+    font-size: 16px; /* iOSズーム防止 */
+    border-radius: 10px;
+    min-height: 52px;
+  }
+  .form-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .form-row {
+    margin-bottom: 14px;
+  }
+  select.form-select {
+    padding: 14px 16px;
+    font-size: 15px;
+    min-height: 52px;
+    border-radius: 10px;
+  }
+
+  /* ── リストアイテムを大きく ── */
+  .acct-item {
+    padding: 14px 16px;
+    min-height: 64px;
+  }
+  .journal-item, .receipt-item {
+    padding: 14px 16px;
+    min-height: 60px;
+  }
+
+  /* ── タブバーを大きく ── */
+  .tab, [class*="tab-btn"] {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  /* ── main-contentの余白 ── */
+  #main-content {
+    padding: 12px 12px 80px;
+  }
+
+  /* ── アラート・バッジを大きく ── */
+  .alert {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  .badge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  /* ── モーダルを画面下から全幅に ── */
+  .modal {
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 32px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* ── topbarを大きく ── */
+  .topbar {
+    height: 52px;
+    padding: 0 14px;
+  }
+  .topbar-title, #topbar-title {
+    font-size: 13px;
+  }
+
+  /* ── body-wrapのpaddingを調整 ── */
+  .body-wrap {
+    padding-bottom: 72px;
+  }
+
+  /* ── セクションタイトルを大きく ── */
+  .section-title, .card-title {
+    font-size: 15px;
+  }
+
+  /* ── タップ領域を最低44px確保 ── */
+  button, a, [role="button"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* ただしnavボタンは除外 */
+  .mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* ── ログイン画面のボタンもモバイルで大きく ── */
+@media (max-width: 767px) {
+  #pw-screen .btn-primary {
+    padding: 16px;
+    font-size: 16px;
+    min-height: 56px;
+    border-radius: 12px;
+  }
+  #pw-screen .btn-secondary {
+    padding: 14px;
+    font-size: 15px;
+    min-height: 52px;
+    border-radius: 12px;
+  }
+  #pw-screen .form-inp {
+    padding: 16px;
+    font-size: 16px;
+    min-height: 54px;
+    border-radius: 12px;
+  }
+  #pw-screen .tab-bar button {
+    padding: 12px;
+    font-size: 13px;
+    min-height: 48px;
+  }
+  .login-card {
+    padding: 0 4px;
+  }
+  #pw-screen .login-logo {
+    width: 160px;
+    margin-bottom: 28px;
+  }
+}
