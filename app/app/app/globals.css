@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --border: #E5E0D8;
+  --sub: #6B6459;
+  --accent: #2F5D50;
+  --safe: #1E5C3A;
+  --warn: #9A6B1E;
+  --danger: #8B2020;
+}
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  min-height: 100dvh;
+}
+
+/* ── ダークモード強制無効化（白背景固定） ── */
+html {
+  color-scheme: light !important;
+  background: #FFFFFF !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background: #FFFFFF !important;
+    color: #1A1A1A !important;
+  }
+  /* カード・ボーダー */
+  .card { background: #FFFFFF !important; border-color: #E5E0D8 !important; }
+  /* フォーム */
+  input, select, textarea {
+    background: #F5F5F5 !important;
+    color: #1A1A1A !important;
+    border-color: #E5E0D8 !important;
+  }
+  /* ナビ */
+  .bottom-nav { background: rgba(255,255,255,0.97) !important; }
+  header      { background: rgba(255,255,255,0.95) !important; }
+  /* 背景色クラス */
+  .bg-white        { background-color: #FFFFFF !important; }
+  .bg-\[\#F5F5F5\] { background-color: #F5F5F5 !important; }
+  .bg-\[\#F8F8F8\] { background-color: #F8F8F8 !important; }
+  .bg-\[\#F2EFE9\] { background-color: #F2EFE9 !important; }
+  /* テキスト色 */
+  .text-\[\#1A1A1A\] { color: #1A1A1A !important; }
+  .text-\[\#6B6459\] { color: #6B6459 !important; }
+  .text-\[\#9A9288\] { color: #9A9288 !important; }
+}
