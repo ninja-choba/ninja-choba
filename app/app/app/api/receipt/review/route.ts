@@ -1,21 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 export async function POST(req: NextRequest) {
+  const apiKey = process.env.STRIPE_SECRET_KEY
+  if (!apiKey) {
+    return NextResponse.json({ error: 'Stripe APIキーが未設定です' }, { status: 503 })
+  }
   try {
-    const body = await req.json()
-    const res  = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', max_tokens: 500, temperature: 0.2,
-      messages: [
-        { role: 'system', content: 'あなたは日本の小規模事業者向け経費レビューAIです。JSONのみで返答。{ "risk":"safe"|"warn"|"danger", "category":"勘定科目", "taxRate":"10%"|"8%"|"0%"|"mixed", "confidence":0~1, "reason":"150文字以内(断定せず)", "alerts":[], "needsHuman":bool }' },
-        { role: 'user',   content: JSON.stringify(body) },
-      ],
+    const { default: Stripe } = await import('stripe')
+    const stripe = new Stripe(apiKey, { apiVersion: '2026-04-22.dahlia' })
+    const { planId, interval, email } = await req.json()
+    const PRICES: Record<string, string> = {
+      standard_month: 'price_standard_month',
+      standard_year: 'price_standard_year',
+      pro_month: 'price_pro_month',
+      pro_year: 'price_pro_year',
+      pro_asset_month: 'price_pro_asset_month',
+      pro_asset_year: 'price_pro_asset_year',
+    }
+    const priceId = PRICES[`${planId}_${interval}`]
+    if (!priceId) return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      customer_email: email,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=1`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/plan`,
+      metadata: { planId, email },
     })
-    const result = JSON.parse(res.choices[0]?.message?.content?.replace(/```json|```/g,'').trim() || '{}')
-    return NextResponse.json(result)
-  } catch {
-    return NextResponse.json({ risk:'warn', category:'', taxRate:'10%', confidence:0, reason:'AI確認不可。手動確認をお願いします。', alerts:['AI確認不可'], needsHuman:true })
+    return NextResponse.json({ url: session.url })
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
