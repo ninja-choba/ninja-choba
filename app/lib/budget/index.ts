@@ -20,7 +20,14 @@ export interface BudgetStatus {
 
 const BUDGET_KEY = 'ninjaBudgetSettings'
 
-export const BudgetStore = {
+export const BudgetStore: {
+  getAll(): BudgetSetting[]
+  save(settings: BudgetSetting[]): void
+  add(setting: BudgetSetting): void
+  remove(category: string): void
+  calcStatus(journals: { date: string; type: string; category: string; amount: number }[]): BudgetStatus[]
+  getAlerts(journals: { date: string; type: string; category: string; amount: number }[]): BudgetStatus[]
+} = {
   getAll(): BudgetSetting[] {
     if (typeof localStorage === 'undefined') return []
     try { return JSON.parse(localStorage.getItem(BUDGET_KEY) || '[]') } catch { return [] }
@@ -72,7 +79,7 @@ export const BudgetStore = {
   },
 
   /** 超過・警告中の科目だけ返す */
-  getAlerts(journals: Parameters<typeof BudgetStore.calcStatus>[0]): BudgetStatus[] {
+  getAlerts(journals: { date: string; type: string; category: string; amount: number }[]): BudgetStatus[] {
     return this.calcStatus(journals).filter(s => s.status !== 'safe')
   }
 }

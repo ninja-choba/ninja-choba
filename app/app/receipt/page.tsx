@@ -449,7 +449,7 @@ export default function ReceiptPage() {
                   onChange={e => {
                     setMerchant(e.target.value)
                     setSuggestions(getMerchantSuggestions(e.target.value))
-                    const mem = (() => { try { return JSON.parse(localStorage.getItem(MERCHANT_KEY) || '{}') } catch { return {} } })()
+                    const mem: any = (() => { try { return JSON.parse(localStorage.getItem(MERCHANT_KEY) || '{}') } catch { return {} } })()
                     const saved = mem[e.target.value.trim()]
                     if (saved) { if (saved.category && !category) setCategory(saved.category); if (saved.taxRate) setTaxRate(saved.taxRate) }
                   }}

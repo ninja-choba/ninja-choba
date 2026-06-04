@@ -91,8 +91,8 @@ export default function DashboardPage() {
   const catAlerts: string[] = []
   const thisCats: Record<string,number> = {}
   const prevCats:  Record<string,number> = {}
-  monthJ.filter(j=>j.type==='expense').forEach(j => { thisCats[j.category||'未分類']=(thisCats[j.category||'未分類']||0)+j.amount })
-  prevJ.filter(j=>j.type==='expense').forEach(j  => { prevCats[j.category||'未分類']=(prevCats[j.category||'未分類']||0)+j.amount  })
+  monthJ.filter((j:any)=>j.type==='expense').forEach((j:any) => { thisCats[j.category||'未分類']=(thisCats[j.category||'未分類']||0)+j.amount })
+  prevJ.filter((j:any)=>j.type==='expense').forEach((j:any)  => { prevCats[j.category||'未分類']=(prevCats[j.category||'未分類']||0)+j.amount  })
   Object.entries(thisCats).forEach(([cat,amt]) => {
     const prev = prevCats[cat] || 0
     if (prev > 0 && amt > prev * 1.2) catAlerts.push(`${cat}が先月比${Math.round(amt/prev*100-100)}%増`)
