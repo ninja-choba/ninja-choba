@@ -1,15 +1,1 @@
-{
-  "name": "ninja-choba",
-  "version": "1.0.0",
-  "description": "忍者帳場AI - 個人事業主・不動産オーナー向けAI経理アシスタント",
-  "private": true,
-  "engines": { "node": ">=18" },
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod",
-    "deploy:preview": "vercel"
-  },
-  "devDependencies": {
-    "vercel": "^34.0.0"
-  }
-}
+{}
