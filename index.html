@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 
 
-<meta name="app-version" content="20260704 17:04">
+<meta name="app-version" content="20260705 16:21">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -812,6 +812,7 @@ select option{background:var(--bg3)}
 
       <button class="btn-primary" id="login-submit-btn" onclick="doCheckPassword()">忍び入る</button>
       <button class="btn-secondary" id="demo-submit-btn" onclick="doDemoLogin()">見学する（登録不要）</button>
+      <a href="/landing.html" class="btn-secondary" style="display:block;width:100%;text-align:center;text-decoration:none;margin-top:8px">帳場のご案内</a>
     </div>
     <!-- 新規登録フォーム -->
     <div id="signup-form" style="display:none">
@@ -827,7 +828,7 @@ select option{background:var(--bg3)}
         <a href="/tokushoho.html" target="_blank" style="color:var(--text3)">特定商取引法に基づく表記</a>
       </div>
     </div>
-    <div class="version-tag" id="version-tag-el" onclick="handleVersionTagTap()">v20260704 17:04</div>
+    <div class="version-tag" id="version-tag-el" onclick="handleVersionTagTap()">v20260705 16:21</div>
   </div>
 
   <!-- ── 帳場口上（ログインカードの下） ── -->
@@ -883,7 +884,7 @@ select option{background:var(--bg3)}
   <div style="display:flex;gap:2px;flex-shrink:0;align-items:center">
     <span id="topbar-acct-btn" style="font-size:11px;color:var(--text2);font-family:var(--font);font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
     <button onclick="showHelpIndex()" style="padding:5px 10px;background:transparent;border:none;font-size:11px;cursor:pointer;font-family:var(--sans);color:var(--text2);white-space:nowrap;flex-shrink:0">手引き</button>
-    <button onclick="showSettings()" style="padding:5px 10px;background:transparent;border:none;font-size:11px;cursor:pointer;font-family:var(--sans);color:var(--text2);white-space:nowrap;flex-shrink:0">奥の間</button>
+    <button onclick="switchTab('settings')" style="padding:5px 10px;background:transparent;border:none;font-size:11px;cursor:pointer;font-family:var(--sans);color:var(--text2);white-space:nowrap;flex-shrink:0">奥の間</button>
     <button onclick="doLogout()" style="padding:5px 10px;background:transparent;border:none;font-size:11px;cursor:pointer;font-family:var(--sans);color:var(--text3);white-space:nowrap;flex-shrink:0">退出</button>
     <button onclick="showMobileMenu()" style="padding:5px 10px;background:transparent;border:none;font-size:11px;cursor:pointer;font-family:var(--sans);color:var(--text2);white-space:nowrap;flex-shrink:0;font-size:15px">≡</button>
   </div>
@@ -1119,14 +1120,6 @@ function updateKPI() {
   if (typeof updateKPIAnimated === 'function') updateKPIAnimated();
 }
 
-function getStoredToken() {
-  try {
-    if (currentAcct && accounts && accounts[currentAcct]) {
-          if (cfg && cfg.access_token) return cfg.access_token;
-    }
-  } catch(e) {}
-  return null;
-}
 
 
 function checkTaxSchedule() {
@@ -1298,11 +1291,11 @@ function showMobileMenu() {
     { label: '消費税率の設定', sub: '税率変更・改定暦', tab: '_taxconfig' },
     { label: '+ 事業者を追加', sub: '新しい事業者・屋号を追加', tab: '_addacct' },
     { label: '表示年度の切替', sub: '前年データの確認', action: 'showYearSwitcherSheet()' },
-    { label: '奥の間', sub: '税率・パートナー・通知など', action: 'showSettings()' }
+    { label: '奥の間', sub: '税率・パートナー・通知など', tab: '_settings' }
   );
 
   var otherHtml = otherItems.map(function(item, i) {
-    var isActive = item.tab && currentTab === item.tab;
+    var isActive = item.tab && (currentTab === item.tab || (item.tab === '_settings' && currentTab === 'settings'));
     return '<button class="mm-other-btn" data-tab="' + item.tab + '" style="'
       + 'display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;'
       + 'background:' + (isActive ? 'var(--accent)' : 'var(--bg3)') + ';'
@@ -1350,7 +1343,7 @@ function menuBtn(label, action, active, small) {
 // デスクトップ用サイドバーのロゴ描画
 
 
-var APP_VERSION = '20260704 17:04';
+var APP_VERSION = '20260705 16:21';
 var MODEL="claude-sonnet-4-6";
 var RECEIPT_MODEL="claude-haiku-4-5-20251001"; // レシート専用（高速・低コスト）
 var currentAcct=null,accounts={},currentTab="dashboard";
@@ -2037,10 +2030,10 @@ function switchTab(name, skipHistory){
     showUpgradePrompt('realestate');
     return;
   }
-  const names=['receipt','review','journal','dashboard','pl','invoices','checklist','budget','partners','assets','bs','realestate','koji'];
+  const names=['receipt','review','journal','dashboard','pl','invoices','checklist','budget','partners','assets','bs','realestate','koji','settings','plans'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
   if (typeof updateMobileNav === 'function') updateMobileNav(name);
-  var __tabFn = {monzen:renderMonzen,dashboard:renderDashboard,pl:renderPL,receipt:renderReceipt,review:renderReview,invoices:renderInvoices,journal:renderJournal,rules:renderRules,hojoconfirm:renderHojoConfirm,dokuritsu:renderDokuritsu,cashflow:renderCashflow,kakeibo_home:renderKakeiboHome,kakeibo_list:renderKakeiboList,kakeibo_budget:renderKakeiboBudget,kakeibo_graph:renderKakeiboGraph,checklist:renderChecklist,furusato:renderFurusato,partners:renderPartners,budget:renderBudget,notify:renderNotify,realestate:renderRealEstate,tax:renderTax,kasan:renderKasan,assets:renderAssets,bs:renderBS,koji:renderKoji};
+  var __tabFn = {monzen:renderMonzen,dashboard:renderDashboard,pl:renderPL,receipt:renderReceipt,review:renderReview,invoices:renderInvoices,journal:renderJournal,rules:renderRules,hojoconfirm:renderHojoConfirm,dokuritsu:renderDokuritsu,cashflow:renderCashflow,kakeibo_home:renderKakeiboHome,kakeibo_list:renderKakeiboList,kakeibo_budget:renderKakeiboBudget,kakeibo_graph:renderKakeiboGraph,checklist:renderChecklist,furusato:renderFurusato,partners:renderPartners,budget:renderBudget,notify:renderNotify,realestate:renderRealEstate,tax:renderTax,kasan:renderKasan,assets:renderAssets,bs:renderBS,koji:renderKoji,settings:renderSettings,plans:renderPlansTab};
   if (typeof __tabFn[name] === 'function') __tabFn[name]();
   if(typeof renderDesktopNav==='function') renderDesktopNav();
   // render完了後にrAFで確実にスクロールリセット
@@ -3432,6 +3425,18 @@ function showBatchReviewUI(results) {
     // 明細行（科目セレクト付き）
     html += '<div style="padding:8px 12px">';
     (p.items||[]).forEach(function(item2, iidx) {
+      if (item2.status === 'excluded') {
+        html += '<div style="padding:6px 0;' + (iidx>0?'border-top:1px solid var(--border)':'') + ';background:rgba(255,80,80,0.05)" id="r-batch-row-' + idx + '-' + iidx + '">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+        html += '<span style="font-size:12px;color:var(--text2)">' + escHtml(item2.name) + '</span>';
+        html += '<div style="display:flex;align-items:center;gap:6px">';
+        html += '<span style="font-family:var(--mono);font-size:12px">' + (item2.amount||0).toLocaleString() + '円</span>';
+        html += '<span class="badge" style="background:rgba(255,80,80,0.15);color:#e74c3c;font-size:9px">経費対象外</span>';
+        html += '</div></div>';
+        html += '<div style="font-size:10px;color:#e74c3c;margin-top:2px;line-height:1.5">' + escHtml(item2.review_reason||'') + '</div>';
+        html += '</div>';
+        return;
+      }
       html += '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;' + (iidx>0?'border-top:1px solid var(--border)':'') + '" id="r-batch-row-' + idx + '-' + iidx + '">';
       html += '<span style="font-size:12px;flex:1;color:var(--text2)">' + escHtml(item2.name) + '</span>';
       html += '<span style="font-family:var(--mono);font-size:12px">' + (item2.amount||0).toLocaleString() + '円</span>';
@@ -3484,22 +3489,25 @@ function saveBatchResults() {
     return;
   }
   var saved = 0;
+  var totalExcluded = 0;
   _batchResults.forEach(function(item, idx) {
     var chk = document.getElementById('r-batch-chk-' + idx);
     if (!chk || !chk.checked) return;
     if (!item.result || item.error) return;
     var p = item.result;
     if (p.doc_type === 'sales') return;
-    // 科目を更新（セレクトの値を反映）＋ 科目学習DB・修正履歴へ記録
+    // 科目を更新（セレクトの値を反映）＋ 科目学習DB・修正履歴へ記録（excluded品目は対象外）
     var updatedItems = (p.items||[]).map(function(it, iidx) {
+      if (it.status === 'excluded') return it; // 経費対象外：科目確定・学習の対象にしない
       var sel = document.getElementById('r-batch-cat-' + idx + '-' + iidx);
       var finalCat = sel ? sel.value : it.category;
       learnCategoryMemory(a, p.store, it.name, finalCat);
       recordCorrectionIfNeeded(a, p.store, it.name, it._aiSuggested, finalCat);
-      return Object.assign({}, it, {category: finalCat});
+      return Object.assign({}, it, {category: finalCat, status: 'confirmed'});
     });
-    // 仕訳保存
-    updatedItems.forEach(function(it) {
+    var excludedInBatch = updatedItems.filter(function(it){return it.status==='excluded';}).length;
+    // 仕訳保存（経費対象外の品目は仕訳帳に入れない）
+    updatedItems.filter(function(it){return it.status==='confirmed';}).forEach(function(it) {
       var entry = {
         id: Date.now() + Math.random(),
         date: p.date || new Date().toISOString().slice(0,10),
@@ -3524,11 +3532,18 @@ function saveBatchResults() {
       a.entries.push(entry);
       saved++;
     });
+    if (excludedInBatch > 0) totalExcluded += excludedInBatch;
   });
   save(currentAcct);
   var batchEl = document.getElementById('r-batch-review');
   if (batchEl) batchEl.remove();
   showToast(saved + '件を帳場に記しました');
+  trackEvent('journal_confirmed', { flow: 'batch', item_count: saved });
+  if (totalExcluded > 0) {
+    setTimeout(function(){
+      showToast(totalExcluded + '件は経費対象外のため記録していません。確定申告プレビューの社会保険料控除欄に入力してください', 'warning');
+    }, 1800);
+  }
   renderLedger();
 }
 
@@ -3861,6 +3876,7 @@ async function saveReceiptResultConfirmed(){
   document.getElementById('r-file').value='';
 
   showToast(d.store+' '+d.total.toLocaleString()+'円 を帳場に記しました'+(imgUrl?' · 画像保存済':''));
+  trackEvent('journal_confirmed', { flow: 'single', item_count: items.filter(function(i){return i.status==='confirmed';}).length });
   var excludedCount = items.filter(function(i){return i.status==='excluded';}).length;
   if (excludedCount > 0) {
     setTimeout(function(){
@@ -3894,32 +3910,6 @@ function sendToPending(){
 
 // ── 要吟味タブ ──
 // ── 科目の揺れ検出（同じ取引内容で過去と科目が違う仕訳を検出） ──
-function detectCategoryDrift(a) {
-  var journals = (a.journals || []).filter(function(j){ return j.status === 'confirmed' && j.description; });
-  var seen = {}; // description正規化 -> 最新の{category, date, id}
-  var drifts = [];
-  // 日付昇順に並べて、最新のものが最後に来るようにする
-  var sorted = journals.slice().sort(function(x,y){ return (x.date||'').localeCompare(y.date||''); });
-  sorted.forEach(function(j) {
-    var key = (j.description || '').trim().toLowerCase();
-    if (!key) return;
-    if (seen[key] && seen[key].category !== j.category) {
-      drifts.push({
-        description: j.description,
-        prevCategory: seen[key].category,
-        prevDate: seen[key].date,
-        newCategory: j.category,
-        newDate: j.date,
-        newId: j.id
-      });
-    }
-    seen[key] = { category: j.category, date: j.date, id: j.id };
-  });
-  // 直近のずれだけ（同じdescriptionで複数回ずれていたら最後のみ）
-  var latestByKey = {};
-  drifts.forEach(function(d) { latestByKey[d.description.trim().toLowerCase()] = d; });
-  return Object.values(latestByKey);
-}
 
 
 function renderReview(){
@@ -4027,7 +4017,11 @@ function resolveReview(receiptId,itemIdx){
     );
   }
   if(!a.journals)a.journals=[];
-  const j={id:nextId(),date:r.date,type:'expense',category:item.category,description:r.store,amount:item.amount,tax_rate:item.tax_rate||getEffectiveTaxRate(item.tax_type==='課税（軽減）'?'reduced':'standard',r.date),tax_type:item.tax_type,status:'confirmed',phase:'phase2'};
+  const j={id:nextId(),date:r.date,type:'expense',category:item.category,description:r.store,amount:item.amount,tax_rate:item.tax_rate||getEffectiveTaxRate(item.tax_type==='課税（軽減）'?'reduced':'standard',r.date),tax_type:item.tax_type,status:'confirmed',phase:'phase2',
+    ai_suggested_category:item._aiSuggested||null,
+    ai_confidence:item.confidence||null,
+    user_modified:(item._aiSuggested && item._aiSuggested !== item.category),
+    confirmed_by:'user',confirmed_at:new Date().toISOString()};
   a.journals.push(j);pushStreamRow(j,true);
   r.status=r.items.some(i=>i.status==='review')?'partial':'confirmed';
   save(currentAcct);updateBadges();renderSidebar();updateKPIAnimated();
@@ -4701,7 +4695,7 @@ function addCustomCatFromSettings() {
   input.value = '';
   typeEl.value = '';
   showToast('「' + name + '」（' + CAT_TYPE_LABELS[catType] + '）を追加しました');
-  showSettings();
+  renderSettings();
 }
 // ── AI学習履歴（店名・科目マッピング）の確認・編集 ──
 // ── レシート読取エラーログ（アカウントごとに保存、最大30件） ──
@@ -5049,7 +5043,7 @@ function deleteCustomCat(idx) {
     a.custom_cats.splice(idx, 1);
     save(currentAcct);
     showToast('削除しました');
-    showSettings();
+    renderSettings();
   });
 }
 try { window.deleteCustomCat = deleteCustomCat; } catch(e) {}
@@ -5379,14 +5373,13 @@ function renderRealEstate() {
         </div>
       </div>
       <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:100;text-align:center;padding:32px 24px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.2);max-width:320px;width:90%">
-        <div style="font-size:32px;margin-bottom:12px">🏠</div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:8px">不動産管理プラン</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;font-family:var(--serif)">不動産管理プラン</div>
         <div style="font-size:12px;color:var(--text3);margin-bottom:20px;line-height:1.6">
           物件・入居者・賃料管理、ローン返済暦、不動産所得の自動計算など、大家さんのための機能が使えます。
         </div>
-        <div style="font-size:20px;font-weight:700;color:var(--accent2);margin-bottom:4px">¥1,980<span style="font-size:12px;font-weight:400;color:var(--text3)">/月</span></div>
+        <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px">¥1,980<span style="font-size:12px;font-weight:400;color:var(--text3)">/月</span></div>
         <div style="font-size:10px;color:var(--text3);margin-bottom:20px">14日間無料トライアルあり</div>
-        <button onclick="showUpgradePrompt('realestate')" style="width:100%;padding:12px;background:var(--accent2);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer">
+        <button onclick="showUpgradePrompt('realestate')" style="width:100%;padding:12px;background:var(--text);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer">
           不動産プランを始める →
         </button>
         <button onclick="switchTab('dashboard')" style="width:100%;padding:10px;background:transparent;color:var(--text3);border:none;font-size:12px;cursor:pointer;margin-top:8px">
@@ -7850,7 +7843,8 @@ var NINJA_PLANS = {
     features: ['事業版の全機能', '物件・入居者管理', '家賃自動仕訳', 'ローン管理', '物件別損益', '月払いより¥3,960お得'] },
 };
 
-function showUpgradePrompt(feature) {
+function renderPlansTab() {
+  var feature = window._pendingPlanFeature || 'solo';
   var planMap = {
     realestate:      'realestate',
     invoices:        'pro',
@@ -7874,9 +7868,9 @@ function showUpgradePrompt(feature) {
       var p = NINJA_PLANS[k];
       var isCurrent = k === basePlanKey || k === (basePlanKey + '_yearly');
       return '<button onclick="startStripeCheckout(\'' + p.planKey + '\',this)" style="'
-        + 'padding:10px 14px;border:2px solid ' + (isCurrent?'var(--text)':'var(--border)') + ';'
-        + 'border-radius:var(--radius);background:' + (isCurrent?'var(--text)':'var(--bg)') + ';'
-        + 'color:' + (isCurrent?'#fff':'var(--text2)') + ';'
+        + 'padding:10px 14px;border:1px solid ' + (isCurrent?'var(--text)':'var(--border)') + ';'
+        + 'border-radius:var(--radius-sm);background:' + (isCurrent?'var(--text)':'var(--bg2)') + ';'
+        + 'color:' + (isCurrent?'#fff':'var(--text)') + ';'
         + 'font-family:var(--font);font-size:11px;cursor:pointer;text-align:left;width:100%;margin-bottom:6px">'
         + '<span style="font-weight:700;font-size:13px">' + p.name + '</span>'
         + '<span style="float:right;font-weight:700;color:' + (isCurrent?'#fff':'var(--accent)') + '">' + p.label + '</span>'
@@ -7884,28 +7878,64 @@ function showUpgradePrompt(feature) {
     }).join('');
   }
 
-  var bg = document.createElement('div'); bg.className = 'modal-bg';
-  bg.innerHTML = '<div class="modal" style="max-width:360px">'
-    + '<div class="modal-title" style="font-family:var(--font)">上位の帳場へ</div>'
+  var html = '<div style="padding:16px;max-width:420px;margin:0 auto">'
+    + '<div style="font-weight:700;margin-bottom:12px;font-family:var(--serif);font-size:16px">上位の帳場へ</div>'
     + '<div style="font-size:12px;color:var(--text3);margin-bottom:14px"><strong>' + targetPlan.name + '</strong> で使える機能です</div>'
-    + '<div style="margin-bottom:16px">' + featuresHtml + '</div>'
+    + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px">' + featuresHtml + '</div>'
     + '<div style="display:flex;gap:6px;margin-bottom:10px">'
-    + '<button id="cycle-monthly-btn" onclick="document.getElementById(\'plans-list\').innerHTML=window._renderPlansMonthly();document.getElementById(\'cycle-monthly-btn\').style.background=\'var(--text)\';document.getElementById(\'cycle-monthly-btn\').style.color=\'#fff\';document.getElementById(\'cycle-yearly-btn\').style.background=\'var(--bg)\';document.getElementById(\'cycle-yearly-btn\').style.color=\'var(--text2)\'" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--text);color:#fff;font-size:11px;font-weight:700;cursor:pointer">月払い</button>'
-    + '<button id="cycle-yearly-btn" onclick="document.getElementById(\'plans-list\').innerHTML=window._renderPlansYearly();document.getElementById(\'cycle-yearly-btn\').style.background=\'var(--text)\';document.getElementById(\'cycle-yearly-btn\').style.color=\'#fff\';document.getElementById(\'cycle-monthly-btn\').style.background=\'var(--bg)\';document.getElementById(\'cycle-monthly-btn\').style.color=\'var(--text2)\'" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer">年払い（お得）</button>'
+    + '<button id="cycle-monthly-btn" onclick="document.getElementById(\'plans-list\').innerHTML=window._renderPlansMonthly();document.getElementById(\'cycle-monthly-btn\').style.background=\'var(--text)\';document.getElementById(\'cycle-monthly-btn\').style.color=\'#fff\';document.getElementById(\'cycle-yearly-btn\').style.background=\'var(--bg2)\';document.getElementById(\'cycle-yearly-btn\').style.color=\'var(--text2)\'" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--text);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">月払い</button>'
+    + '<button id="cycle-yearly-btn" onclick="document.getElementById(\'plans-list\').innerHTML=window._renderPlansYearly();document.getElementById(\'cycle-yearly-btn\').style.background=\'var(--text)\';document.getElementById(\'cycle-yearly-btn\').style.color=\'#fff\';document.getElementById(\'cycle-monthly-btn\').style.background=\'var(--bg2)\';document.getElementById(\'cycle-monthly-btn\').style.color=\'var(--text2)\'" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">年払い（お得）</button>'
     + '</div>'
     + '<div id="plans-list" style="margin-bottom:16px">' + renderPlans('monthly') + '</div>'
     + '<div id="stripe-checkout-loading" style="display:none;text-align:center;padding:8px;font-size:12px;color:var(--text3)">決済画面へ移動中...</div>'
     + '<div style="font-size:9px;color:var(--text3);text-align:center;margin-bottom:10px"><a href="/tokushoho.html" target="_blank" style="color:var(--text3)">特定商取引法に基づく表記</a> ・ <a href="/terms.html" target="_blank" style="color:var(--text3)">利用規約</a></div>'
-    + '<button onclick="this.closest(\'.modal-bg\').remove()" class="btn btn-ghost btn-sm" style="width:100%">閉じる</button>'
     + '</div>';
   window._renderPlansMonthly = function(){ return renderPlans('monthly'); };
   window._renderPlansYearly = function(){ return renderPlans('yearly'); };
-  document.getElementById('app').appendChild(bg);
+  var _mc = document.getElementById('main-content');
+  if (_mc) _mc.innerHTML = html;
 }
+
+// 互換ラッパー: 従来通り showUpgradePrompt('solo') 等で呼べるようにする
+function showUpgradePrompt(feature) {
+  window._pendingPlanFeature = feature || 'solo';
+  switchTab('plans');
+}
+try { window.showUpgradePrompt = showUpgradePrompt; } catch(e) {}
+try { window.renderPlansTab = renderPlansTab; } catch(e) {}
+
+// 請求管理（プラン変更・解約・請求履歴）：Stripe Customer Portalへ
+async function openBillingPortal() {
+  var a = accounts[currentAcct];
+  var email = a ? a.email : '';
+  trackEvent('billing_portal_opened', { current_plan: a ? (a.plan||'free') : 'free' });
+  if (!email) { showToast('メールアドレスが確認できませんでした'); return; }
+  showToast('請求管理画面へ移動しています…');
+  try {
+    var res = await fetch('/api/stripe-portal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        return_url: window.location.origin + '/'
+      }),
+    });
+    var data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      showToast('請求管理画面への移動に失敗しました: ' + (data.error || '不明なエラー'));
+    }
+  } catch(e) {
+    showToast('エラー: ' + e.message);
+  }
+}
+try { window.openBillingPortal = openBillingPortal; } catch(e) {}
 
 async function startStripeCheckout(planKey, btnEl) {
   var a = accounts[currentAcct];
   var email = a ? a.email : '';
+  trackEvent('upgrade_started', { plan: planKey, from_plan: a ? (a.plan||'free') : 'free' });
   var loadingEl = document.getElementById('stripe-checkout-loading');
   if (loadingEl) loadingEl.style.display = 'block';
   if (btnEl) btnEl.disabled = true;
@@ -7963,13 +7993,16 @@ async function handleCheckoutReturn() {
     if (verified) {
       var planData = NINJA_PLANS[plan];
       showToast((plan === 'dencho' ? '電帳法対応オプション' : (planData ? planData.name : plan)) + ' への反映が完了しました！');
+      trackEvent('upgrade_completed', { plan: plan });
     } else {
       showToast('決済の反映に時間がかかっています。数分後に再度お確かめください。反映されない場合はサポートまでご連絡ください。');
+      trackEvent('upgrade_verification_pending', { plan: plan });
     }
     // URLパラメータをクリア
     window.history.replaceState({}, '', window.location.pathname);
   } else if (status === 'cancel') {
     showToast('決済をキャンセルしました');
+    trackEvent('upgrade_cancelled', { plan: plan || null });
     window.history.replaceState({}, '', window.location.pathname);
   }
 }
@@ -8307,25 +8340,94 @@ async function parseMgmtReport(input) {
     const d = await res.json();
     const raw = d.content[0].text.replace(/\`\`\`json|\`\`\`/g,'').trim();
     const report = JSON.parse(raw);
-    const a = accounts[currentAcct]; if(!a.journals) a.journals=[];
-    let added = 0;
-    (report.items||[]).forEach(item => {
-      a.journals.push({
-        id: nextId(), date: item.date, description: item.description,
-        amount: item.amount, type: item.type||'income', category: item.category||'売上高',
-        tax_rate: 10, tax_type: '課税', status: 'confirmed', phase: 'phase2',
-        income_type: 'realestate',
-      });
-      added++;
-    });
-    save(currentAcct); updateKPI(); renderSidebar();
-    if (statusEl) statusEl.innerHTML = '<div style="padding:8px;font-size:12px;color:var(--green)"> ' + added + '件の仕訳を追加しました（' + (report.month||'') + '）</div>';
+    // 全仕訳はユーザー確認必須（税理士法対応）：即確定せず確認一覧を表示する
+    window._pendingMgmtReport = report;
+    if (statusEl) statusEl.innerHTML = '';
     input.closest('.modal-bg')?.remove();
-    if (added > 0) renderRealEstate();
+    showMgmtReportReview(report);
   } catch(err) {
     if (statusEl) statusEl.innerHTML = '<div style="padding:8px;font-size:12px;color:var(--red)"> 読み取り失敗</div>';
   }
 }
+
+// 管理会社レポートの確認一覧（レシートと同じくユーザーが科目を確認してから確定する）
+function showMgmtReportReview(report) {
+  const a = accounts[currentAcct];
+  const allCats = getAllCategories(a);
+  const items = (report.items||[]).map(function(item){
+    return Object.assign({}, item, {
+      category: item.category || '売上高',
+      type: item.type || 'income',
+      _aiSuggested: item.category || '売上高',
+      status: 'review'
+    });
+  });
+  window._pendingMgmtReport = { month: report.month, items: items };
+
+  const bg = document.createElement('div'); bg.className = 'modal-bg';
+  let rowsHtml = items.map(function(item, idx) {
+    return '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;' + (idx>0?'border-top:1px solid var(--border)':'') + '" id="mgmt-row-' + idx + '">'
+      + '<div style="flex:1;min-width:0"><div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(item.description||'') + '</div>'
+      + '<div style="font-size:10px;color:var(--text3)">' + escHtml(item.date||'') + '</div></div>'
+      + '<span style="font-family:var(--mono);font-size:12px">' + (item.amount||0).toLocaleString() + '円</span>'
+      + '<select id="mgmt-cat-' + idx + '" onchange="confirmMgmtItem(' + idx + ')" style="font-size:11px;padding:3px 6px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);min-width:90px">'
+      + allCats.map(function(c){ return '<option' + (c===item.category?' selected':'') + '>' + c + '</option>'; }).join('')
+      + '</select>'
+      + '<span class="badge b-yellow" id="mgmt-badge-' + idx + '" style="font-size:9px">要確認</span>'
+      + '</div>';
+  }).join('');
+
+  bg.innerHTML = '<div class="modal" style="width:460px;max-height:80vh;overflow-y:auto">'
+    + '<div class="modal-title">管理会社レポートの確認（' + (report.month||'') + '）</div>'
+    + '<div class="alert a-yellow" style="font-size:11px;margin-bottom:10px">内容を確認し、科目を選び直してから記帳してください。AIの読み取りは参考情報です。</div>'
+    + '<div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;padding:0 12px;margin-bottom:14px">' + rowsHtml + '</div>'
+    + '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="saveMgmtReportReview()">確認した内容を記帳する</button>'
+    + '<button onclick="this.closest(\'.modal-bg\').remove()" class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px">キャンセル</button>'
+    + '</div>';
+  document.getElementById('app').appendChild(bg);
+}
+function confirmMgmtItem(idx) {
+  var pending = window._pendingMgmtReport;
+  if (!pending || !pending.items[idx]) return;
+  var sel = document.getElementById('mgmt-cat-' + idx);
+  if (!sel) return;
+  pending.items[idx].category = sel.value;
+  pending.items[idx].status = 'confirmed';
+  var badge = document.getElementById('mgmt-badge-' + idx);
+  if (badge) { badge.textContent = '済'; badge.classList.remove('b-yellow'); badge.classList.add('b-green'); }
+}
+try { window.confirmMgmtItem = confirmMgmtItem; } catch(e) {}
+
+function saveMgmtReportReview() {
+  const pending = window._pendingMgmtReport;
+  if (!pending) return;
+  const unconfirmed = pending.items.filter(function(i){ return i.status !== 'confirmed'; }).length;
+  if (unconfirmed > 0) {
+    showToast(unconfirmed + '件の科目が未確認です。全て確認してから記帳してください', 'warning');
+    return;
+  }
+  const a = accounts[currentAcct]; if(!a.journals) a.journals=[];
+  let added = 0;
+  pending.items.forEach(function(item) {
+    a.journals.push({
+      id: nextId(), date: item.date, description: item.description,
+      amount: item.amount, type: item.type||'income', category: item.category||'売上高',
+      tax_rate: 10, tax_type: '課税', status: 'confirmed', phase: 'phase2',
+      income_type: 'realestate',
+      ai_suggested_category: item._aiSuggested || null,
+      user_modified: (item._aiSuggested && item._aiSuggested !== item.category),
+      confirmed_by: 'user', confirmed_at: new Date().toISOString(),
+    });
+    added++;
+  });
+  save(currentAcct); updateKPI(); renderSidebar();
+  trackEvent('journal_confirmed', { flow: 'mgmt_report', item_count: added });
+  showToast(added + '件の仕訳を追加しました（' + (pending.month||'') + '）');
+  document.querySelectorAll('.modal-bg').forEach(function(m){ m.remove(); });
+  window._pendingMgmtReport = null;
+  if (added > 0 && typeof renderRealEstate === 'function') renderRealEstate();
+}
+try { window.saveMgmtReportReview = saveMgmtReportReview; } catch(e) {}
 
 
 // ══════════════════════════════════════════════════════════════
@@ -9034,6 +9136,24 @@ async function loadFromSupabase(userId) {
 // ── Supabase経由で仕訳を保存（1件） ──
 
 // ── Supabase経由でアカウントを保存 ──
+// ── 主要イベント計測（マネタイズ・グロース判断のための数値基盤） ──
+// テーブル: ninja_events (user_id, email, event_name, props jsonb, created_at)
+// 失敗しても画面には一切影響しない（fire and forget）。個人の財務データ（金額・店名等）は送らない。
+function trackEvent(eventName, props) {
+  try {
+    if (!SB.client) return; // 未ログイン・接続前は計測しない
+    var row = {
+      user_id: SB.userId || null,
+      email: currentAcct || null,
+      event_name: eventName,
+      props: props || {},
+      created_at: new Date().toISOString()
+    };
+    SB.client.from('ninja_events').insert(row).then(function(){}).catch(function(){});
+  } catch(e) { /* 計測失敗はアプリ動作に影響させない */ }
+}
+try { window.trackEvent = trackEvent; } catch(e) {}
+
 async function saveAccountToSupabase(email) {
   if (!SB.client || !email || !SB.userId) return false;
   const a = accounts[email];
@@ -9283,7 +9403,7 @@ function renderDesktopNav() {
     ]},
     { title: 'その他', items: [
       { icon: '節', label: '節税の心得', tab: 'dokuritsu' },
-      { icon: '設', label: '奥の間', action: 'showSettings()' },
+      { icon: '設', label: '奥の間', tab: 'settings' },
     ]},
   ];
   if (isRE) sections.push({ title: '不動産', items: [{ icon: '', label: '不動産管理', tab: 'realestate' }] });
@@ -9331,33 +9451,6 @@ function showPendingOCRList() {
 }
 
 // ── ダッシュボード警告バナー ──
-function buildDashboardAlerts(a) {
-  // アラートはメインエントリ単位で件数を数えるため直接参照（expandEntries不使用）
-  const J = getJournals(a);
-  const alerts = [];
-
-  // 要吟味仕訳
-  const needsReview = J.filter(function(j) { return j.alert || j.status === 'unconfirmed'; }).length;
-  if (needsReview > 0) {
-    alerts.push({ level: 'warning', icon: '!', msg: '整えが必要な仕訳が' + needsReview + '件あります', action: "switchTab('review')", actionLabel: '確認する' });
-  }
-
-  // freee送信待ち
-  const freeeWaiting = J.filter(function(j) { return j.status === 'confirmed' && !j.freee_sent; }).length;
-  if (freeeWaiting > 10) {
-    alerts.push({ level: 'info', icon: '', msg: 'freee送信待ちが' + freeeWaiting + '件あります', action: "switchTab('freee')", actionLabel: '送信する' });
-  }
-
-  // 今月データなし
-  const now = new Date();
-  const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  const thisMonthData = J.filter(function(j) { return (j.date||'').startsWith(thisMonth); });
-  if (thisMonthData.length === 0 && now.getDate() > 10) {
-    alerts.push({ level: 'warning', icon: '', msg: '今月の仕訳がまだ登録されていません', action: "switchTab('receipt')", actionLabel: '登録する' });
-  }
-
-  return alerts;
-}
 
 
 // ── 送信状態管理 ──
@@ -9411,9 +9504,6 @@ function savePendingOCR(imageData, rawText) {
   showToast('判定待ちとして保存しました');
 }
 
-function getPendingOCRCount(a) {
-  return ((a && a.pending_ocr) || []).filter(function(p) { return p.status === 'pending'; }).length;
-}
 
 // ── 3. 高精度自動判定ロジック ──
 
@@ -9433,14 +9523,6 @@ function saveLearningRules(rules, email) {
   } catch(e) {}
 }
 
-function getLearningRuleFor(storeName) {
-  const rules = getLearningRules();
-  const name = (storeName || '').toLowerCase().trim();
-  return rules.find(function(r) {
-    const pat = (typeof r.pattern === 'string' ? r.pattern : String(r.pattern||'')).toLowerCase();
-    return name.includes(pat) || pat.includes(name);
-  }) || null;
-}
 
 function addLearningRule(pattern, category, source) {
   const rules = getLearningRules();
@@ -9695,20 +9777,6 @@ function changeMemberRole(id, role) {
 // ── 3. 入力者を仕訳に保存 ──
 
 // ── 4. 登録者別ダッシュボード集計 ──
-function calcMemberStats(a) {
-  const journals = a.journals || [];
-  const stats = {};
-  journals.forEach(function(j) {
-    const name = j.input_by || '（未設定）';
-    if (!stats[name]) stats[name] = { count: 0, amount: 0, last_at: '' };
-    stats[name].count++;
-    stats[name].amount += j.type === 'expense' ? (j.amount || 0) : 0;
-    if (!stats[name].last_at || j.input_at > stats[name].last_at) {
-      stats[name].last_at = j.input_at || j.date || '';
-    }
-  });
-  return stats;
-}
 
 
 // ── 5. 仕訳帳の登録者別フィルタ ──
@@ -9840,41 +9908,6 @@ function addAuditLog(action, target, data, note) {
   if (a.audit_logs.length > 200) a.audit_logs = a.audit_logs.slice(0, 200);
 }
 
-function renderAuditLog() {
-  const a = accounts[currentAcct];
-  const logs = (a && a.audit_logs) || [];
-  const el = document.getElementById('audit-log-list');
-  if (!el) return;
-
-  const ACTION_LABELS = {
-    create: { label: '登録', color: 'var(--green)' },
-    update: { label: '修正', color: 'var(--blue)' },
-    delete: { label: '削除', color: 'var(--red)' },
-    lock:   { label: '締め', color: 'var(--yellow)' },
-    unlock: { label: '締め解除', color: 'var(--yellow)' },
-  };
-
-  if (!logs.length) {
-    el.innerHTML = '<div style="font-family:var(--sans);font-size:12px;color:var(--text3);padding:12px 0">操作履歴はありません</div>';
-    return;
-  }
-
-  el.innerHTML = logs.slice(0, 30).map(function(log) {
-    const act = ACTION_LABELS[log.action] || { label: log.action, color: 'var(--text3)' };
-    const dt = new Date(log.operated_at).toLocaleString('ja-JP', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
-    const d = log.data_snapshot || {};
-    return '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px">'
-      + '<span style="font-family:var(--sans);font-weight:700;color:' + act.color + ';min-width:40px">' + act.label + '</span>'
-      + '<div style="flex:1;min-width:0">'
-      + '<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)">' + (d.description || log.target) + '</div>'
-      + '<div style="font-family:var(--sans);font-size:9px;color:var(--text3)">'
-      + (d.amount ? d.amount.toLocaleString() + '円 · ' : '')
-      + (log.note || '') + ' · ' + (log.operator || '') + '</div>'
-      + '</div>'
-      + '<span style="font-family:var(--sans);font-size:9px;color:var(--text3);white-space:nowrap">' + dt + '</span>'
-      + '</div>';
-  }).join('');
-}
 
 
 
@@ -11766,6 +11799,7 @@ async function handleSignup() {
 
     // トライアル開始・自動ログイン
     startTrial(email);
+    trackEvent('signup', { has_invite: !!invite });
     sessionStorage.setItem('ninja_choba_auth', '1');
     sessionStorage.setItem('login_email', email);
     sessionStorage.setItem('login_name', name);
@@ -12950,8 +12984,29 @@ window.addEventListener('load', function() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(function(reg) {
       console.log('[PWA] SW登録完了:', reg.scope);
+      // 起動のたびに新しいsw.jsがないか明示的に確認する（デフォルトのブラウザ判断任せにしない）
+      reg.update().catch(function(){});
+      // 新しいService Workerが見つかり、インストール完了した場合は自動でリロードして反映する
+      reg.addEventListener('updatefound', function() {
+        var newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            console.log('[PWA] 新バージョンを検知。反映します');
+            try { showToast('新しいバージョンに更新しています…'); } catch(e) {}
+            setTimeout(function(){ window.location.reload(); }, 800);
+          }
+        });
+      });
     }).catch(function(err) {
       console.log('[PWA] SW登録失敗:', err);
+    });
+    // 制御が切り替わった（新SWがactivateした）ら念のためもう一度リロード
+    var _swReloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (_swReloaded) return;
+      _swReloaded = true;
+      window.location.reload();
     });
   }
 });
@@ -13188,20 +13243,6 @@ var AIReviewHistory = {
 };
 
 /* 4. 前月比較 */
-function calcMonthComparison() {
-  var all=[]; try{all=JSON.parse(localStorage.getItem(('ninjaChoubaReceipts:'+(currentAcct||'default')))||'[]');}catch(e){}
-  var now=new Date(), tp=now.toISOString().slice(0,7);
-  var pv=new Date(now.getFullYear(),now.getMonth()-1,1), pp=pv.toISOString().slice(0,7);
-  var tm=all.filter(function(r){return r.date&&r.date.startsWith(tp);});
-  var pm=all.filter(function(r){return r.date&&r.date.startsWith(pp);});
-  var tt=tm.reduce(function(s,r){return s+(r.amount||0);},0);
-  var pt=pm.reduce(function(s,r){return s+(r.amount||0);},0);
-  var diff=tt-pt, rate=pt>0?Math.round(diff/pt*100):0;
-  var cats={};
-  tm.forEach(function(r){var c=r.category||'未分類';if(!cats[c])cats[c]={t:0,p:0};cats[c].t+=r.amount||0;});
-  pm.forEach(function(r){var c=r.category||'未分類';if(!cats[c])cats[c]={t:0,p:0};cats[c].p+=r.amount||0;});
-  return {this:{total:tt,count:tm.length},prev:{total:pt,count:pm.length},diff:diff,rate:rate,cats:cats};
-}
 
 
 /* 5. 残高整合チェック */
@@ -13315,79 +13356,9 @@ var ShurikenSystem = {
 /* ════ 資金繰り追加機能 v20260629 18:24 ════ */
 
 /* ── 変動費分析 ── */
-function analyzeVariableCosts(a) {
-  var journals = (a && a.journals) || [];
-  var receipts = [];
-  try { receipts = JSON.parse(localStorage.getItem(('ninjaChoubaReceipts:'+(currentAcct||'default'))) || '[]'); } catch(e) {}
-
-  var now = new Date();
-  var months = {};
-  for (var i = 5; i >= 0; i--) {
-    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    var ym = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-    months[ym] = { fixed: 0, variable: 0, label: (d.getMonth()+1) + '月' };
-  }
-
-  // 固定費：毎月同額・同科目のもの
-  var FIXED_CATS = ['地代家賃','水道光熱費','通信費','保険料','リース料','減価償却費'];
-  var VAR_CATS   = ['交際費','会議費','旅費交通費','広告宣伝費','消耗品費','雑費','外注費'];
-
-  journals.forEach(function(j) {
-    if (j.type !== 'expense' || !j.date) return;
-    var ym = j.date.slice(0,7);
-    if (!months[ym]) return;
-    var cat = j.category || '';
-    if (FIXED_CATS.some(function(c){return cat.includes(c);})) {
-      months[ym].fixed += j.amount || 0;
-    } else {
-      months[ym].variable += j.amount || 0;
-    }
-  });
-
-  receipts.forEach(function(r) {
-    if (!r.date) return;
-    var ym = r.date.slice(0,7);
-    if (!months[ym]) return;
-    var cat = r.category || '';
-    if (FIXED_CATS.some(function(c){return cat.includes(c);})) {
-      months[ym].fixed += r.amount || 0;
-    } else {
-      months[ym].variable += r.amount || 0;
-    }
-  });
-
-  return Object.entries(months).map(function(e) {
-    return Object.assign({ym: e[0]}, e[1]);
-  });
-}
 
 
 /* ── 大口支払い通知 ── */
-function checkLargePayments(a) {
-  var plan = getCashflowPlan(a);
-  var now = new Date();
-  var alerts = [];
-
-  for (var i = 0; i <= 2; i++) {
-    var d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-    var ym = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-    var label = i === 0 ? '今月' : i === 1 ? '来月' : '再来月';
-
-    plan.filter(function(p) {
-      return p.ym === ym && p.type === 'expense' && (p.amount || 0) >= 100000;
-    }).forEach(function(p) {
-      alerts.push({
-        label: label,
-        name: p.name || '支払予定',
-        amount: p.amount,
-        ym: ym,
-        severity: p.amount >= 500000 ? 'danger' : 'warn'
-      });
-    });
-  }
-
-  return alerts;
-}
 
 
 /* ── 固定費登録UI ── */
@@ -13440,19 +13411,6 @@ function saveFixedCost() {
 }
 
 /* ── 資金不足予測（〇ヶ月後に赤字になる可能性） ── */
-function forecastCashShortage(a) {
-  var startBalance = typeof getTotalBankBalance === 'function' ? getTotalBankBalance() : (a && a.bank_balance || 0);
-  var months = calcCashflow(a, startBalance);
-  var shortages = months.filter(function(m) {
-    return m.closeBalance < 0 || m.net < 0;
-  });
-  return {
-    months: months,
-    shortages: shortages,
-    firstShortage: shortages.length > 0 ? shortages[0] : null,
-    safeMonths: months.filter(function(m) { return m.closeBalance >= 0; }).length
-  };
-}
 
 
 /* ── 融資相談用サマリーPDF出力 ── */
@@ -13622,17 +13580,6 @@ function calcPropertySimulation(params) {
 
 /* ── シミュレーション画面を開く ── */
 
-function simInput(id, label, defaultVal, type, options) {
-  if (type === 'select') {
-    return '<div><label style="font-size:11px;color:#6B6459;display:block;margin-bottom:4px;">' + label + '</label>'
-      + '<select id="' + id + '" style="width:100%;padding:9px 10px;border:1px solid #E5E0D8;border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">'
-      + options.map(function(o){ return '<option value="' + o.v + '">' + o.l + '</option>'; }).join('')
-      + '</select></div>';
-  }
-  return '<div><label style="font-size:11px;color:#6B6459;display:block;margin-bottom:4px;">' + label + '</label>'
-    + '<input id="' + id + '" type="number" value="' + defaultVal + '" inputmode="decimal"'
-    + ' style="width:100%;padding:9px 10px;border:1px solid #E5E0D8;border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;"></div>';
-}
 
 function getSimVal(id, multiplier) {
   var v = parseFloat(document.getElementById(id).value) || 0;
@@ -14200,7 +14147,7 @@ function showDenchoOption() {
 }
 
 
-function showSettings() {
+function renderSettings() {
   var a = accounts[currentAcct] || {};
   var plan = a.plan || 'free';
   var planNames = { free:'無料版', trial:'トライアル', solo:'ひとり版', pro:'事業版', realestate:'不動産版' };
@@ -14232,27 +14179,27 @@ function showSettings() {
   html += trialInfo;
   html += '</div>';
   html += '<span style="background:' + planColor + ';color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px">' + planName + '</span>';
-  html += '<button onclick="showAccountEditModal();closeSheet()" style="width:100%;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer;margin-top:8px">アカウント設定（名前・パスワード変更）</button>';
+  html += '<button onclick="showAccountEditModal()" style="width:100%;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer;margin-top:8px">アカウント設定（名前・パスワード変更）</button>';
   html += '</div>';
 
   // プランボタン
   if (plan === 'free' || plan === 'trial') {
-    html += '<button onclick="showUpgradePrompt(\'solo\');closeSheet()" style="width:100%;padding:9px;background:var(--text);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">上位の帳場へ進む →</button>';
+    html += '<button onclick="showUpgradePrompt(\'solo\')" style="width:100%;padding:9px;background:var(--text);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">上位の帳場へ進む →</button>';
   } else {
     html += '<div style="display:flex;gap:6px">';
-    html += '<button onclick="closeSheet()" style="flex:1;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer">プラン変更</button>';
-    html += '<button onclick="closeSheet()" style="flex:1;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer">請求履歴</button>';
+    html += '<button onclick="openBillingPortal()" style="flex:1;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer">プラン変更・解約</button>';
+    html += '<button onclick="openBillingPortal()" style="flex:1;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer">請求履歴</button>';
     html += '</div>';
   }
 
   // 電帳法オプション
   if (['solo','pro','realestate'].includes(plan) && !a.dencho_option) {
-    html += '<button onclick="showDenchoOption();closeSheet()" style="width:100%;padding:8px;background:transparent;color:var(--accent2);border:1px solid var(--accent2);border-radius:var(--radius-sm);font-family:var(--font);font-size:11px;cursor:pointer;margin-top:6px">電帳法対応オプション ¥300/月 →</button>';
+    html += '<button onclick="showDenchoOption()" style="width:100%;padding:8px;background:transparent;color:var(--accent2);border:1px solid var(--accent2);border-radius:var(--radius-sm);font-family:var(--font);font-size:11px;cursor:pointer;margin-top:6px">電帳法対応オプション ¥300/月 →</button>';
   } else if (a.dencho_option) {
     html += '<div style="font-size:10px;color:var(--green);margin-top:6px;text-align:center">電帳法対応オプション 有効</div>';
   }
   html += '</div>';
-  html += '<button onclick="switchTab(\'notify\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">通知設定</button>';
+  html += '<button onclick="switchTab(\'notify\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">通知設定</button>';
   // 業種設定
   html += '<div style="font-size:10px;font-weight:700;color:var(--text3);margin:14px 0 6px;letter-spacing:0.8px">業種設定</div>';
   html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px">';
@@ -14301,19 +14248,24 @@ function showSettings() {
     html += '<div class="lbl">カスタム科目はまだありません</div>';
   }
   html += '</div>';
-  html += '<button onclick="switchTab(\'tax\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">消費税率</button>';
-  html += '<button onclick="showLearningDB();closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)"> AI学習履歴<span class="lbl-sm" style="margin-left:auto;color:var(--text3)">店名・科目の覚えた内容</span></button>';
+  html += '<button onclick="switchTab(\'tax\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">消費税率</button>';
+  html += '<button onclick="showLearningDB()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)"> AI学習履歴<span class="lbl-sm" style="margin-left:auto;color:var(--text3)">店名・科目の覚えた内容</span></button>';
   html += '<button onclick="exportFullBackup()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)"> 全データバックアップ<span class="lbl-sm" style="margin-left:auto;color:var(--text3)">JSONで保存</span></button>';
   html += '<button onclick="restoreFullBackup()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid rgba(255,80,80,0.3);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)"> バックアップから復元<span class="lbl-sm" style="margin-left:auto;color:#e74c3c">現在のデータを上書き</span></button>';
-  html += '<button onclick="showReceiptErrorLog();closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)"> 読取エラー履歴<span class="lbl-sm" style="margin-left:auto;color:var(--text3)">失敗の原因を確認</span></button>';
-  html += '<button onclick="switchTab(\'rules\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">仕訳ルール集</button>';
-  html += '<button onclick="switchTab(\'freee\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">freee出張所</button>';
-  html += '<button onclick="switchTab(\'partners\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">取引先管理</button>';
-  html += '<button onclick="switchTab(\'budget\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">予算管理</button>';
-  html += '<button onclick="switchTab(\'kasan\');closeSheet()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">家事按分</button>';
+  html += '<button onclick="showReceiptErrorLog()" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)"> 読取エラー履歴<span class="lbl-sm" style="margin-left:auto;color:var(--text3)">失敗の原因を確認</span></button>';
+  html += '<button onclick="switchTab(\'rules\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">仕訳ルール集</button>';
+  html += '<button onclick="switchTab(\'freee\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">freee出張所</button>';
+  html += '<button onclick="switchTab(\'partners\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">取引先管理</button>';
+  html += '<button onclick="switchTab(\'budget\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">予算管理</button>';
+  html += '<button onclick="switchTab(\'kasan\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--text)">家事按分</button>';
   html += '</div>';
-  showSheet(html);
+  var _mc = document.getElementById('main-content');
+  if (_mc) _mc.innerHTML = html;
 }
+
+function showSettings() { switchTab('settings'); }
+try { window.showSettings = showSettings; } catch(e) {}
+try { window.renderSettings = renderSettings; } catch(e) {}
 
 // ── 事業者切り替えモーダル ──
 // TOPBARの事業者名を更新（表示のみ）
@@ -15408,7 +15360,6 @@ try { window.showPropertyTenants = showPropertyTenants; } catch(e) {}
 try { window.showREJournalForm = showREJournalForm; } catch(e) {}
 try { window.showTaxMenu = showTaxMenu; } catch(e) {}
 try { window.showTenantDetail = showTenantDetail; } catch(e) {}
-try { window.showUpgradeModal = showUpgradeModal; } catch(e) {}
 try { window.switchTab = switchTab; } catch(e) {}
 try { window.switchToManualEntry = switchToManualEntry; } catch(e) {}
 try { window.testSupabaseConnection = testSupabaseConnection; } catch(e) {}
