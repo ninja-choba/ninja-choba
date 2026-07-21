@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>接続の確認｜忍者帳場</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;
+       max-width:640px;margin:0 auto;padding:20px 16px 60px;line-height:1.8;
+       color:#1a1a1a;background:#fff;font-size:15px}
+  h1{font-size:19px;border-bottom:2px solid #1a1a1a;padding-bottom:10px;margin-bottom:6px}
+  .lead{font-size:12px;color:#666;margin-bottom:20px;line-height:1.7}
+  .box{border:1px solid #ddd;border-radius:8px;padding:14px;margin-bottom:16px}
+  .box h2{font-size:14px;margin:0 0 10px}
+  label{display:block;font-size:12px;color:#555;margin-bottom:4px}
+  input{width:100%;box-sizing:border-box;padding:11px;font-size:16px;
+        border:1px solid #ccc;border-radius:6px;margin-bottom:10px}
+  button{width:100%;padding:13px;font-size:15px;font-weight:700;border:none;
+         border-radius:6px;background:#1a1a1a;color:#fff;cursor:pointer}
+  button:disabled{background:#999}
+  pre{background:#f6f6f6;border:1px solid #e0e0e0;border-radius:6px;padding:12px;
+      font-size:11px;line-height:1.6;white-space:pre-wrap;word-break:break-all;
+      margin:10px 0 0;max-height:320px;overflow-y:auto}
+  .ok{color:#1e7a4f;font-weight:700}
+  .ng{color:#c0392b;font-weight:700}
+  .note{background:#fffbe9;border-left:3px solid #b8860b;padding:10px 12px;
+        font-size:12px;line-height:1.75;margin-top:12px}
+  .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;
+       border-bottom:1px solid #eee;font-size:13px}
+  .row:last-child{border-bottom:none}
+  .row b{flex-shrink:0}
+</style>
+</head>
+<body>
+
+<h1>接続の確認</h1>
+<p class="lead">
+  このページは、忍者帳場アプリとは切り離して動きます。<br>
+  アプリの調子に関係なく、サーバーとの通信を直接確かめられます。
+</p>
+
+<div class="box">
+  <h2>一、サーバーの設定</h2>
+  <div id="cfg">確認しています…</div>
+</div>
+
+<div class="box">
+  <h2>二、ログインの確認</h2>
+  <p style="font-size:12px;color:#666;margin:0 0 12px">
+    サーバーが返した内容を、そのまま下に表示します。
+  </p>
+  <label>メールアドレス</label>
+  <input type="email" id="email" autocomplete="username" placeholder="you@example.com">
+  <label>パスワード</label>
+  <input type="password" id="pw" autocomplete="current-password" placeholder="パスワード">
+  <button id="btn" onclick="runLogin()">ログインを試す</button>
+  <div id="loginResult"></div>
+</div>
+
+<div class="box" id="dataBox" style="display:none">
+  <h2>三、クラウドの帳簿</h2>
+  <div id="dataResult"></div>
+</div>
+
+<p style="font-size:11px;color:#888;text-align:center;margin-top:24px">
+  <a href="/" style="color:#666">忍者帳場に戻る</a>
+</p>
+
+<script>
+var CFG = null;
+
+// ── サーバーの設定を確認 ──
+function loadConfig() {
+  var el = document.getElementById('cfg');
+  fetch('/api/config?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(cfg) {
+      CFG = cfg;
+      var url = (cfg.supabase_url || '').replace(/\/+$/, '');
+      var key = cfg.supabase_key || '';
+      var html = '';
+      html += row('接続先', url || '（空）', !!url);
+      html += row('鍵', key ? (key.slice(0, 12) + '…（' + key.length + '文字）') : '（空）', !!key);
+      // 鍵からプロジェクト識別子を取り出して、接続先と一致するか見る
+      var ref = '';
+      try {
+        var p = key.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        while (p.length % 4) p += '=';
+        ref = (JSON.parse(atob(p)) || {}).ref || '';
+      } catch (e) {}
+      if (ref) {
+        var expect = 'https://' + ref + '.supabase.co';
+        html += row('鍵と接続先の一致', url === expect ? '一致しています' : '食い違い（鍵は ' + expect + '）', url === expect);
+      }
+      el.innerHTML = html;
+    })
+    .catch(function(e) {
+      el.innerHTML = '<span class="ng">設定を読み込めませんでした：' + esc(e.message) + '</span>';
+    });
+}
+
+function row(label, value, ok) {
+  return '<div class="row"><b>' + esc(label) + '</b>'
+       + '<span class="' + (ok ? 'ok' : 'ng') + '">' + esc(value) + '</span></div>';
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ── ログインを試す ──
+function runLogin() {
+  var em = (document.getElementById('email').value || '').trim().toLowerCase();
+  var pw = document.getElementById('pw').value || '';
+  var out = document.getElementById('loginResult');
+  var btn = document.getElementById('btn');
+  if (!em || !pw) { out.innerHTML = '<p class="ng">両方入れてください</p>'; return; }
+
+  btn.disabled = true;
+  out.innerHTML = '<p>試しています…</p>';
+
+  fetch('/api/supabase-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'login', email: em, password: pw })
+  })
+  .then(function(res) {
+    return res.text().then(function(text) { return { status: res.status, text: text }; });
+  })
+  .then(function(r) {
+    btn.disabled = false;
+    var json = null;
+    try { json = JSON.parse(r.text); } catch (e) {}
+
+    var html = '<p><b>HTTP ' + r.status + '</b></p>';
+    if (json && json.access_token) {
+      html += '<p class="ok">ログインできました</p>';
+      html += '<div class="row"><b>利用者ID</b><span>' + esc((json.user || {}).id || '') + '</span></div>';
+      html += '<div class="row"><b>メール</b><span>' + esc((json.user || {}).email || '') + '</span></div>';
+      html += '<div class="note">認証は正常です。続けて下の「三」でクラウドの帳簿を確認します。</div>';
+      out.innerHTML = html;
+      checkData(json.access_token, (json.user || {}).id);
+    } else {
+      html += '<p class="ng">ログインできませんでした</p>';
+      html += '<p style="font-size:12px;color:#666;margin:8px 0 0">サーバーが返した内容：</p>';
+      html += '<pre>' + esc(r.text || '（空）') + '</pre>';
+      out.innerHTML = html;
+    }
+  })
+  .catch(function(e) {
+    btn.disabled = false;
+    out.innerHTML = '<p class="ng">通信できませんでした：' + esc(e.message) + '</p>';
+  });
+}
+
+// ── クラウドの帳簿を確認 ──
+function checkData(token, userId) {
+  var box = document.getElementById('dataBox');
+  var out = document.getElementById('dataResult');
+  box.style.display = 'block';
+  out.innerHTML = '<p>確認しています…</p>';
+
+  var url = (CFG.supabase_url || '').replace(/\/+$/, '');
+  var key = CFG.supabase_key || '';
+  if (!url || !key) { out.innerHTML = '<p class="ng">接続先が分からないため確認できません</p>'; return; }
+
+  fetch(url + '/rest/v1/ninja_accounts?select=email,name,business,year,plan&user_id=eq.' + encodeURIComponent(userId), {
+    headers: { 'apikey': key, 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+  })
+  .then(function(res) {
+    return res.text().then(function(text) { return { status: res.status, text: text }; });
+  })
+  .then(function(r) {
+    var json = null;
+    try { json = JSON.parse(r.text); } catch (e) {}
+    var html = '<p><b>HTTP ' + r.status + '</b></p>';
+
+    if (Array.isArray(json)) {
+      if (json.length === 0) {
+        html += '<p class="ng">クラウドに帳簿が1件もありません</p>';
+        html += '<div class="note">接続はできていますが、これまでクラウドに保存されていなかったということです。'
+              + '端末の中のデータをクラウドへ引き上げる必要があります。この画面を撮ってお知らせください。</div>';
+      } else {
+        html += '<p class="ok">' + json.length + '件見つかりました</p>';
+        json.forEach(function(a) {
+          html += '<div class="row"><b>' + esc(a.email || '') + '</b>'
+                + '<span>' + esc((a.business || a.name || '') + ' / ' + (a.plan || '')) + '</span></div>';
+        });
+        html += '<div class="note">クラウドに帳簿があります。アプリでログインし直せば、この内容が開きます。</div>';
+      }
+    } else {
+      html += '<p class="ng">読み取れませんでした</p>';
+      html += '<pre>' + esc(r.text || '（空）') + '</pre>';
+      html += '<div class="note">テーブルが無い、または権限（RLS）の設定が必要かもしれません。'
+            + 'この画面を撮ってお知らせください。</div>';
+    }
+    out.innerHTML = html;
+  })
+  .catch(function(e) {
+    out.innerHTML = '<p class="ng">通信できませんでした：' + esc(e.message) + '</p>';
+  });
+}
+
+loadConfig();
+</script>
+</body>
+</html>
